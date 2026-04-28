@@ -46,6 +46,21 @@ def test_fastapi_profile_generation(tmp_path):
     assert "문서 업데이트가 필수" in document_rules
 
 
+def test_python_profile_generation(tmp_path):
+    config = ProjectConfig(project_name="sample-python", stack=("python",))
+
+    CodexBuilder().build(config, target_dir=tmp_path)
+
+    architecture_rules = (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "ARCHITECTURE_RULES.md").read_text(encoding="utf-8")
+    framework_rules = (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "FRAMEWORK_RULES.md").read_text(encoding="utf-8")
+    test_rules = (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "TEST_RULES.md").read_text(encoding="utf-8")
+
+    assert "Python" in framework_rules
+    assert "Entrypoint/CLI -> Application Service -> Domain/Adapter -> External System" in architecture_rules
+    assert "import 시점에 파일 생성" in framework_rules
+    assert "CLI 인자, 설정 파싱, 오류 경로" in test_rules
+
+
 def test_react_profile_generation(tmp_path):
     config = ProjectConfig(project_name="sample-web", stack=("react",))
 

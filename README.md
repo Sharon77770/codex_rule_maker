@@ -21,36 +21,7 @@ pip install -e .
 codex-init --help
 ```
 
-PyPI 배포 후에는 다음 명령으로 설치할 수 있습니다.
-
-```bash
-pip install codex-rule-maker
-codex-init --help
-```
-
-## PyPI 배포
-
-배포 전 패키지를 빌드하고 검사합니다.
-
-```bash
-pip install -e ".[dev]"
-python -m build
-python -m twine check dist/*
-```
-
-PyPI API token을 발급한 뒤 업로드합니다.
-
-```bash
-python -m twine upload dist/*
-```
-
-테스트 PyPI에 먼저 올리고 싶다면 다음 명령을 사용합니다.
-
-```bash
-python -m twine upload --repository testpypi dist/*
-```
-
-업로드가 끝나면 새 환경에서 설치를 확인합니다.
+PyPI 설치:
 
 ```bash
 pip install codex-rule-maker
@@ -144,6 +115,7 @@ codex-init --force --overwrite
 프로젝트 설명: 자연어 기반 PFM 시뮬레이션 플랫폼
 지원 프로필:
 - fastapi
+- python
 - springboot
 - react
 - nextjs
@@ -215,6 +187,7 @@ DB: mysql
 ## 지원 프레임워크 프로필
 
 - `fastapi`: controller/service/repository/schema/entity 계층 분리
+- `python`: 일반 Python package/module/service/adapter/CLI 경계 분리
 - `springboot`: controller/service/repository/entity/dto 계층 분리
 - `react`: component/page/hook/service/store 분리
 - `nextjs`: App Router, Server Component와 Client Component 구분
@@ -225,6 +198,7 @@ DB: mysql
 
 ```bash
 codex-init --stack fastapi,react
+codex-init --stack python
 codex-init --stack fullstack-fastapi-react
 codex-init --stack nextjs
 ```
@@ -252,6 +226,7 @@ pytest
 - 누락 값 prompt 보완
 - 잘못된 stack/docs/language 검증
 - FastAPI 프로필 생성
+- Python 프로필 생성
 - React 프로필 생성
 - Fullstack FastAPI React 프로필 생성
 - 기존 `.codex`가 있을 때 prompt 중단

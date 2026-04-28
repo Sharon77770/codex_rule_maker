@@ -30,6 +30,30 @@ def test_cli_generates_with_options_only(tmp_path):
     assert (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "GLOBAL_RULES.md").exists()
 
 
+def test_cli_generates_python_profile(tmp_path):
+    result = main(
+        [
+            "--target-dir",
+            str(tmp_path),
+            "--name",
+            "sample-python",
+            "--stack",
+            "python",
+            "--auth",
+            "no",
+            "--external-api",
+            "no",
+            "--docs",
+            "standard",
+        ]
+    )
+
+    assert result == 0
+    framework_rules = (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "FRAMEWORK_RULES.md").read_text(encoding="utf-8")
+    assert "Python" in framework_rules
+    assert "`main()` 진입점" in framework_rules
+
+
 def test_cli_no_args_runs_interactive_flow(tmp_path, monkeypatch):
     answers = iter(
         [

@@ -43,6 +43,63 @@ class FrameworkProfile:
         return self.test_rules_en if language == "en" else self.test_rules_ko
 
 
+PYTHON_PROFILE = FrameworkProfile(
+    key="python",
+    display_name="Python",
+    philosophy_ko="일반 Python 프로젝트는 프레임워크 전제 없이 package/module, service, adapter, CLI 경계를 명확히 분리한다.",
+    philosophy_en="General Python projects should separate package/module, service, adapter, and CLI boundaries without assuming a framework.",
+    architecture_ko=(
+        "패키지는 기능 또는 도메인 책임 기준으로 나누고 임시 script 모음처럼 방치하지 않는다.",
+        "CLI 또는 실행 진입점은 입력 파싱과 출력 변환만 담당하고 실제 판단은 service/application 계층에 위임한다.",
+        "핵심 도메인 함수와 클래스는 파일 시스템, 네트워크, 환경 변수, process args에 직접 의존하지 않게 한다.",
+        "파일, DB, 외부 API, subprocess 연동은 adapter 또는 infrastructure 모듈 뒤에 둔다.",
+        "권장 흐름: Entrypoint/CLI -> Application Service -> Domain/Adapter -> External System.",
+    ),
+    architecture_en=(
+        "Split packages by feature or domain responsibility instead of leaving them as loose script collections.",
+        "CLI or runtime entrypoints should only parse input and map output, then delegate decisions to service/application layers.",
+        "Keep core domain functions and classes independent from filesystem, network, environment variables, and process args.",
+        "Put filesystem, database, external API, and subprocess integrations behind adapter or infrastructure modules.",
+        "Recommended flow: Entrypoint/CLI -> Application Service -> Domain/Adapter -> External System.",
+    ),
+    framework_rules_ko=(
+        "import 시점에 파일 생성, 네트워크 호출, 프로세스 실행 같은 부수효과가 발생하지 않게 한다.",
+        "실행 가능한 모듈은 `main()` 진입점을 제공하고 직접 실행 코드는 `if __name__ == \"__main__\"` 아래에 둔다.",
+        "표준 라이브러리로 충분한 문제에 불필요한 dependency를 추가하지 않는다.",
+        "공개 함수와 클래스에는 의미 있는 타입 힌트를 유지하고, 입력/출력 모델은 명확한 자료 구조로 표현한다.",
+        "순수 계산 로직과 I/O 로직을 분리해 테스트와 재사용이 가능하게 한다.",
+    ),
+    framework_rules_en=(
+        "Avoid import-time side effects such as file creation, network calls, or process execution.",
+        "Runnable modules should expose a `main()` entrypoint and keep direct execution under `if __name__ == \"__main__\"`.",
+        "Do not add dependencies when the standard library is enough for the problem.",
+        "Keep meaningful type hints on public functions and classes, and represent input/output models with explicit data structures.",
+        "Separate pure computation from I/O so logic stays testable and reusable.",
+    ),
+    api_rules_ko=(
+        "공개 함수, 클래스, CLI 옵션은 외부 계약으로 보고 이름과 반환 형식을 안정적으로 관리한다.",
+        "외부 입력은 진입점에서 검증하고 내부 모델로 변환한 뒤 service 계층에 전달한다.",
+        "예외는 호출자가 처리할 수 있는 명확한 타입 또는 메시지로 표현한다.",
+    ),
+    api_rules_en=(
+        "Treat public functions, classes, and CLI options as external contracts with stable names and return shapes.",
+        "Validate external input at the entrypoint and convert it into internal models before passing it to services.",
+        "Represent errors with clear exception types or messages that callers can handle.",
+    ),
+    test_rules_ko=(
+        "순수 로직 테스트와 파일/네트워크/환경 변수 I/O 테스트를 분리한다.",
+        "`tmp_path`, monkeypatch, test double을 사용해 파일 시스템과 외부 의존성을 격리한다.",
+        "CLI 인자, 설정 파싱, 오류 경로는 회귀 테스트로 고정한다.",
+    ),
+    test_rules_en=(
+        "Separate tests for pure logic from tests that cover filesystem, network, or environment I/O.",
+        "Use `tmp_path`, monkeypatching, and test doubles to isolate filesystem and external dependencies.",
+        "Lock down CLI arguments, configuration parsing, and error paths with regression tests.",
+    ),
+    directories=("src/<package_name>", "src/<package_name>/services", "src/<package_name>/adapters", "tests", "scripts"),
+)
+
+
 FASTAPI_PROFILE = FrameworkProfile(
     key="fastapi",
     display_name="FastAPI",
@@ -377,6 +434,7 @@ PROFILES: dict[str, FrameworkProfile] = {
     profile.key: profile
     for profile in (
         FASTAPI_PROFILE,
+        PYTHON_PROFILE,
         SPRINGBOOT_PROFILE,
         REACT_PROFILE,
         NEXTJS_PROFILE,
@@ -386,6 +444,11 @@ PROFILES: dict[str, FrameworkProfile] = {
 }
 
 PROFILE_ALIASES: dict[str, str] = {
+    "py": "python",
+    "python3": "python",
+    "plain-python": "python",
+    "vanilla-python": "python",
+    "general-python": "python",
     "fast-api": "fastapi",
     "spring": "springboot",
     "spring-boot": "springboot",
