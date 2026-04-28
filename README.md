@@ -1,6 +1,6 @@
-# codex-folder-builder
+# codex-rule-maker
 
-`codex-folder-builder`는 프로젝트 루트에 `.codex` 폴더를 자동 구성하는 Python CLI 도구입니다. 사용자가 프로젝트 이름, 설명, 스택, DB, 인증 여부, 외부 API 여부, 문서화 수준, 문서 언어를 입력하면 Codex가 작업 전에 읽을 개발 규칙과 프로젝트 참고 문서 템플릿을 생성합니다.
+`codex-rule-maker`는 프로젝트 루트에 `.codex` 폴더를 자동 구성하는 Python CLI 도구입니다. 사용자가 프로젝트 이름, 설명, 스택, DB, 인증 여부, 외부 API 여부, 문서화 수준, 문서 언어를 입력하면 Codex가 작업 전에 읽을 개발 규칙과 프로젝트 참고 문서 템플릿을 생성합니다.
 
 이 도구는 `output_ex/.codex` 예시의 철학을 참고했습니다. 예시를 그대로 복사하지 않고, 규칙 문서와 참고 문서를 분리한 범용 템플릿으로 일반화했습니다.
 
@@ -18,6 +18,42 @@ python -m codex_builder.cli --help
 
 ```bash
 pip install -e .
+codex-init --help
+```
+
+PyPI 배포 후에는 다음 명령으로 설치할 수 있습니다.
+
+```bash
+pip install codex-rule-maker
+codex-init --help
+```
+
+## PyPI 배포
+
+배포 전 패키지를 빌드하고 검사합니다.
+
+```bash
+pip install -e ".[dev]"
+python -m build
+python -m twine check dist/*
+```
+
+PyPI API token을 발급한 뒤 업로드합니다.
+
+```bash
+python -m twine upload dist/*
+```
+
+테스트 PyPI에 먼저 올리고 싶다면 다음 명령을 사용합니다.
+
+```bash
+python -m twine upload --repository testpypi dist/*
+```
+
+업로드가 끝나면 새 환경에서 설치를 확인합니다.
+
+```bash
+pip install codex-rule-maker
 codex-init --help
 ```
 

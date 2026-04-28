@@ -3,16 +3,36 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "codex-folder-builder"
+name = "codex-rule-maker"
 version = "0.1.0"
 description = "CLI tool that generates a .codex folder with AI developer rules and project reference documents."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ name = "codex-rule-maker" }]
+keywords = ["codex", "cli", "project-template", "developer-rules", "documentation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Documentation",
+]
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7,<9"]
+dev = ["build>=1,<2", "pytest>=7,<9", "twine>=5,<7"]
+
+[project.urls]
+Homepage = "https://github.com/Sharon77770/codex_rule_maker"
+Repository = "https://github.com/Sharon77770/codex_rule_maker"
+Issues = "https://github.com/Sharon77770/codex_rule_maker/issues"
 
 [project.scripts]
 codex-init = "codex_builder.cli:main"
