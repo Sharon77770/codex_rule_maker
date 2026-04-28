@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 CODEX_DIR_NAME = ".codex"
-AI_RULE_DIR_NAME = "AI_RULE_DEVELOPER"
-REF_DOCS_DIR_NAME = "REF_DOCS"
+AI_RULE_DIR_NAME = "ai_rule_developer"
+REF_DOCS_DIR_NAME = "ref_docs"
+DOCS_DIR_NAME = "docs"
 START_PROMPT_FILE_NAME = "codex_start_prompt.txt"
 
 RULE_FILE_NAMES = (
@@ -13,15 +14,20 @@ RULE_FILE_NAMES = (
     "CODE_STYLE_RULES.md",
     "API_DESIGN_RULES.md",
     "DOCUMENT_RULE.md",
-    "TEST_RULES.md",
-    "FRAMEWORK_RULES.md",
+    "DOMAIN_MODEL_RULES.md",
+    "EXTERNAL_INTEGRATION_RULES.md",
+    "SERVICE_LAYER_RULES.md",
 )
 
-REF_DOC_FILE_NAMES = (
-    "PROJECT_OVERVIEW.md",
-    "FEATURE_SPEC.md",
-    "API_SPEC.md",
-    "DB_SPEC.md",
+DOC_FILE_NAMES = (
+    "architecture/directory.md",
+    "architecture/architecture.md",
+    "architecture/component.md",
+    "architecture/state.md",
+    "architecture/flow.md",
+    "api/endpoints.md",
+    "api/specification.md",
+    "database/schema.md",
 )
 
 DEFAULT_LANGUAGE = "ko"

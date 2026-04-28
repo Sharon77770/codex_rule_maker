@@ -1,8 +1,6 @@
 # codex-rule-maker
 
-`codex-rule-maker`는 프로젝트 루트에 `.codex` 폴더를 자동 구성하는 Python CLI 도구입니다. 사용자가 프로젝트 이름, 설명, 스택, DB, 인증 여부, 외부 API 여부, 문서화 수준, 문서 언어를 입력하면 Codex가 작업 전에 읽을 개발 규칙과 프로젝트 참고 문서 템플릿을 생성합니다.
-
-이 도구는 `output_ex/.codex` 예시의 철학을 참고했습니다. 예시를 그대로 복사하지 않고, 규칙 문서와 참고 문서를 분리한 범용 템플릿으로 일반화했습니다.
+`codex-rule-maker`는 프로젝트 루트에 `.codex` 규칙 폴더와 `docs/` 프로젝트 문서 템플릿을 자동 구성하는 Python CLI 도구입니다. 사용자가 프로젝트 이름, 설명, 스택, DB, 인증 여부, 외부 API 여부, 문서화 수준, 문서 언어를 입력하면 Codex가 작업 전에 읽을 개발 규칙과 프로젝트 문서 구조를 생성합니다.
 
 ## 설치
 
@@ -111,8 +109,8 @@ codex-init --force --overwrite
 ## 예시 실행 흐름
 
 ```text
-프로젝트 이름 [sample]: pfm-lab
-프로젝트 설명: 자연어 기반 PFM 시뮬레이션 플랫폼
+프로젝트 이름 [sample]: 마리오
+프로젝트 설명: 2D 플렛포머 게임
 지원 프로필:
 - fastapi
 - python
@@ -132,8 +130,8 @@ DB 종류 [mysql]: mysql
 
 생성 설정 확인
 
-프로젝트 이름: pfm-lab
-설명: 자연어 기반 PFM 시뮬레이션 플랫폼
+프로젝트 이름: 마리오
+설명: 2D 플랫포머 게임
 스택: fastapi,react
 DB: mysql
 인증: yes
@@ -160,29 +158,39 @@ DB: mysql
 | `--interactive` | 대화형 입력 사용 및 최종 확인 표시 | 비활성 |
 | `--force` | 기존 `.codex`가 있으면 백업 후 재생성 | 비활성 |
 | `--overwrite` | `--force`와 함께 기존 `.codex` 삭제 후 재생성 | 비활성 |
-| `--target-dir` | `.codex`를 생성할 대상 디렉토리 | 현재 디렉토리 |
+| `--target-dir` | `.codex`와 `docs/`를 생성할 대상 디렉토리 | 현재 디렉토리 |
 
 ## 생성 구조
 
 ```text
 .codex/
-├── AI_RULE_DEVELOPER/
+├── ai_rule_developer/
 │   ├── GLOBAL_RULES.md
 │   ├── ARCHITECTURE_RULES.md
 │   ├── CODE_STYLE_RULES.md
 │   ├── API_DESIGN_RULES.md
 │   ├── DOCUMENT_RULE.md
-│   ├── TEST_RULES.md
-│   └── FRAMEWORK_RULES.md
-├── REF_DOCS/
-│   ├── PROJECT_OVERVIEW.md
-│   ├── FEATURE_SPEC.md
-│   ├── API_SPEC.md
-│   └── DB_SPEC.md
+│   ├── DOMAIN_MODEL_RULES.md
+│   ├── EXTERNAL_INTEGRATION_RULES.md
+│   └── SERVICE_LAYER_RULES.md
+├── ref_docs/
 └── codex_start_prompt.txt
+
+docs/
+├── architecture/
+│   ├── directory.md
+│   ├── architecture.md
+│   ├── component.md
+│   ├── state.md
+│   └── flow.md
+├── api/
+│   ├── endpoints.md
+│   └── specification.md
+└── database/
+    └── schema.md
 ```
 
-`AI_RULE_DEVELOPER`는 코딩할 때 지켜야 하는 규칙입니다. `REF_DOCS`는 개발 시 참고할 프로젝트 명세입니다. `codex_start_prompt.txt`는 Codex가 작업 시작 전에 `.codex` 문서를 먼저 읽고 규칙 우선순위를 적용하도록 지시합니다.
+`ai_rule_developer`는 코딩할 때 지켜야 하는 규칙입니다. `ref_docs`는 외부 아키텍처 문서, PRD, 리서치, 벤더 문서처럼 사용자가 임의로 추가하는 참고자료 공간이므로 디렉토리만 생성합니다. 프로젝트 자체 명세는 루트 `docs/` 아래에 생성되며, 기존 `docs/` 파일이 있으면 덮어쓰지 않습니다. `codex_start_prompt.txt`는 Codex가 작업 시작 전에 `.codex` 문서를 먼저 읽고 규칙 우선순위를 적용하도록 지시합니다.
 
 ## 지원 프레임워크 프로필
 
@@ -211,6 +219,7 @@ codex-init --stack nextjs
 - `--auth yes`는 인증/권한 규칙을 포함합니다.
 - `--external-api yes`는 외부 연동 계층 분리 규칙을 포함합니다.
 - `--db mysql`처럼 DB를 지정하면 DB, Repository, Schema 관련 규칙을 포함합니다.
+- 프로젝트 명세 템플릿은 `.codex/ref_docs`가 아니라 `docs/architecture`, `docs/api`, `docs/database`에 생성됩니다.
 
 ## 테스트
 
@@ -218,17 +227,3 @@ codex-init --stack nextjs
 pip install -e ".[dev]"
 pytest
 ```
-
-검증 범위:
-
-- 기본 생성 성공
-- 옵션만으로 생성 가능
-- 누락 값 prompt 보완
-- 잘못된 stack/docs/language 검증
-- FastAPI 프로필 생성
-- Python 프로필 생성
-- React 프로필 생성
-- Fullstack FastAPI React 프로필 생성
-- 기존 `.codex`가 있을 때 prompt 중단
-- `--force`가 있으면 기존 `.codex` 백업 후 재생성
-- `--force --overwrite`가 있으면 기존 `.codex` 삭제 후 재생성

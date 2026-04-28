@@ -47,10 +47,15 @@ class CodexBuilder:
             backup_dir = self._replace_existing_codex(codex_dir, backup_existing=backup_existing)
 
         try:
+            for relative_dir in self._renderer.render_directories(config):
+                (root / relative_dir).mkdir(parents=True, exist_ok=True)
+
             written_files: list[Path] = []
             for relative_path, content in rendered_files.items():
                 destination = root / relative_path
                 destination.parent.mkdir(parents=True, exist_ok=True)
+                if destination.exists() and relative_path.parts[0] != CODEX_DIR_NAME:
+                    continue
                 destination.write_text(content.rstrip() + "\n", encoding="utf-8")
                 written_files.append(destination)
         except OSError as exc:

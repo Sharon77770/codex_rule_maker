@@ -27,7 +27,9 @@ def test_cli_generates_with_options_only(tmp_path):
     )
 
     assert result == 0
-    assert (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "GLOBAL_RULES.md").exists()
+    assert (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").exists()
+    assert (tmp_path / ".codex" / "ref_docs").is_dir()
+    assert (tmp_path / "docs" / "api" / "specification.md").exists()
 
 
 def test_cli_generates_python_profile(tmp_path):
@@ -49,9 +51,9 @@ def test_cli_generates_python_profile(tmp_path):
     )
 
     assert result == 0
-    framework_rules = (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "FRAMEWORK_RULES.md").read_text(encoding="utf-8")
-    assert "Python" in framework_rules
-    assert "`main()` 진입점" in framework_rules
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    assert "Python" in service_rules
+    assert "`main()` 진입점" in service_rules
 
 
 def test_cli_no_args_runs_interactive_flow(tmp_path, monkeypatch):
@@ -96,10 +98,11 @@ def test_cli_prompt_completes_missing_values(tmp_path, monkeypatch):
     result = main(["--target-dir", str(tmp_path), "--name", "prompt-api"])
 
     assert result == 0
-    overview = (tmp_path / ".codex" / "REF_DOCS" / "PROJECT_OVERVIEW.md").read_text(encoding="utf-8")
+    overview = (tmp_path / "docs" / "architecture" / "architecture.md").read_text(encoding="utf-8")
     assert "prompt-api" in overview
     assert "Prompt description" in overview
     assert "FastAPI, React" in overview
+    assert not any((tmp_path / ".codex" / "ref_docs").iterdir())
 
 
 def test_cli_interactive_with_options_shows_final_confirmation(tmp_path, monkeypatch):
@@ -110,7 +113,7 @@ def test_cli_interactive_with_options_shows_final_confirmation(tmp_path, monkeyp
     result = main(args)
 
     assert result == 0
-    overview = (tmp_path / ".codex" / "REF_DOCS" / "PROJECT_OVERVIEW.md").read_text(encoding="utf-8")
+    overview = (tmp_path / "docs" / "architecture" / "architecture.md").read_text(encoding="utf-8")
     assert "Configured by options" in overview
 
 
@@ -133,8 +136,8 @@ def test_cli_reprompts_invalid_stack_value(tmp_path, monkeypatch):
     result = main(["--target-dir", str(tmp_path), "--name", "prompt-api"])
 
     assert result == 0
-    framework_rules = (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "FRAMEWORK_RULES.md").read_text(encoding="utf-8")
-    assert "Next.js" in framework_rules
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    assert "Next.js" in service_rules
 
 
 def test_cli_rejects_invalid_stack_option(tmp_path):
@@ -230,7 +233,7 @@ def test_cli_existing_codex_prompt_abort_keeps_folder(tmp_path, monkeypatch):
 
     assert result == 0
     assert (existing / "old.txt").read_text(encoding="utf-8") == "old"
-    assert not (existing / "AI_RULE_DEVELOPER").exists()
+    assert not (existing / "ai_rule_developer").exists()
 
 
 def test_cli_force_backs_up_existing_codex(tmp_path):
@@ -244,7 +247,7 @@ def test_cli_force_backs_up_existing_codex(tmp_path):
     backups = list(tmp_path.glob(".codex_backup_*"))
     assert len(backups) == 1
     assert (backups[0] / "old.txt").read_text(encoding="utf-8") == "old"
-    assert (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "GLOBAL_RULES.md").exists()
+    assert (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").exists()
 
 
 def test_cli_force_overwrite_deletes_existing_codex(tmp_path):
@@ -257,7 +260,7 @@ def test_cli_force_overwrite_deletes_existing_codex(tmp_path):
     assert result == 0
     assert not list(tmp_path.glob(".codex_backup_*"))
     assert not (tmp_path / ".codex" / "old.txt").exists()
-    assert (tmp_path / ".codex" / "AI_RULE_DEVELOPER" / "GLOBAL_RULES.md").exists()
+    assert (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").exists()
 
 
 def _full_option_args(target_dir: Path, *, extra: Optional[list[str]] = None) -> list[str]:

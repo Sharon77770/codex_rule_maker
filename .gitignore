@@ -34,3 +34,5 @@ htmlcov/
 Thumbs.db
 .idea/
 .vscode/
+
+output_ex/*

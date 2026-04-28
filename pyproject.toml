@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codex-rule-maker"
-version = "0.1.1"
+version = "0.2.0"
 description = "CLI tool that generates a .codex folder with AI developer rules and project reference documents."
 readme = "README.md"
 requires-python = ">=3.9"
