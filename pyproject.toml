@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-folder-builder"
+version = "0.1.0"
+description = "CLI tool that generates a .codex folder with AI developer rules and project reference documents."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "codex-rule-maker" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7,<9"]
+
+[project.scripts]
+codex-init = "codex_builder.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["codex_builder*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
