@@ -194,13 +194,13 @@ docs/
 
 ## 지원 프레임워크 프로필
 
-- `fastapi`: controller/service/repository/schema/entity 계층 분리
-- `python`: 일반 Python package/module/service/adapter/CLI 경계 분리
-- `springboot`: controller/service/repository/entity/dto 계층 분리
-- `react`: component/page/hook/service/store 분리
-- `nextjs`: App Router, Server Component와 Client Component 구분
-- `node-express`: route/controller/service/repository 분리
-- `fullstack-fastapi-react`: FastAPI 백엔드와 React 프론트엔드 규칙 동시 적용
+- `fastapi`: 기능 폴더 하위 controller/service/repository/schema/entity 분리
+- `python`: 기능/도메인 폴더 하위 service/adapter/model/CLI 경계 분리
+- `springboot`: 기능 package 하위 controller/service/repository/entity/dto 분리
+- `react`: 기능 폴더 하위 page/component/hook/service/store 분리
+- `nextjs`: App Router 유지, 기능 폴더 하위 component/service/repository/type 분리
+- `node-express`: 기능 폴더 하위 route/controller/service/repository 분리
+- `fullstack-fastapi-react`: FastAPI 백엔드와 React 프론트엔드 모두 기능 폴더 하위 계층 분리 적용
 
 여러 프로필은 comma로 조합할 수 있습니다.
 

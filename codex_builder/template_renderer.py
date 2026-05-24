@@ -174,7 +174,7 @@ class TemplateRenderer:
             lines = [
                 f"# Architecture Rules - {config.project_name}",
                 "",
-                "This project follows a layered architecture. Keep responsibilities explicit and directional.",
+                "This project follows a feature-first layered architecture. Keep responsibilities explicit and directional.",
                 "",
                 "[Directory Structure]",
             ]
@@ -183,6 +183,11 @@ class TemplateRenderer:
                     lines.extend(f"- `{directory}`" for directory in profile.directories)
             lines.extend(
                 [
+                    "",
+                    "[Feature Module Layout]",
+                    "- Prefer feature/domain folders as the outer boundary, such as `login`, `post`, or `talk`.",
+                    "- Place layer folders such as `controllers`, `services`, `repositories`, `schemas`, `entities`, `components`, or `hooks` inside each feature when the active profile uses them.",
+                    "- Keep cross-cutting code in shared/core/infrastructure folders only when it is reused by multiple features.",
                     "",
                     "[Layer Responsibilities]",
                     "- Presentation/API layers handle request parsing, response mapping, routing, and UI composition only.",
@@ -203,7 +208,7 @@ class TemplateRenderer:
             lines = [
                 f"# 아키텍처 규칙 - {config.project_name}",
                 "",
-                "이 프로젝트는 명확한 계층형 아키텍처를 따른다. 책임과 의존성 방향을 반드시 분리한다.",
+                "이 프로젝트는 기능 우선 계층형 아키텍처를 따른다. 책임과 의존성 방향을 반드시 분리한다.",
                 "",
                 "[디렉토리 구조]",
             ]
@@ -212,6 +217,11 @@ class TemplateRenderer:
                     lines.extend(f"- `{directory}`" for directory in profile.directories)
             lines.extend(
                 [
+                    "",
+                    "[기능 모듈 배치]",
+                    "- `login`, `post`, `talk` 같은 기능/도메인 폴더를 바깥 경계로 우선한다.",
+                    "- 활성 profile에서 사용하는 `controllers`, `services`, `repositories`, `schemas`, `entities`, `components`, `hooks` 같은 계층 폴더는 각 기능 폴더 안에 둔다.",
+                    "- 여러 기능에서 공유하는 설정, 공통 middleware, 공통 client만 shared/core/infrastructure에 둔다.",
                     "",
                     "[계층 책임]",
                     "- Presentation/API 계층은 요청 파싱, 응답 변환, 라우팅, 화면 조립만 담당한다.",
@@ -978,8 +988,10 @@ class TemplateRenderer:
                 "- Directory path",
                 "- Major file path",
                 "- Responsibility",
-                "- Owner layer or feature",
+                "- Owner feature and layer",
                 "- Notes about important dependencies",
+                "",
+                "Use feature/domain folders as the outer boundary and document layer folders underneath each feature.",
                 "",
                 "## Current Structure",
                 "| Path | Type | Responsibility | Owner | Notes |",
@@ -999,8 +1011,10 @@ class TemplateRenderer:
             "- 디렉토리 경로",
             "- 주요 파일 경로",
             "- 책임",
-            "- 담당 계층 또는 기능",
+            "- 담당 기능 및 계층",
             "- 중요한 의존성 메모",
+            "",
+            "기능/도메인 폴더를 바깥 경계로 두고, 각 기능 하위의 계층 폴더를 문서화한다.",
             "",
             "## 현재 구조",
             "| Path | Type | Responsibility | Owner | Notes |",
@@ -1033,6 +1047,7 @@ class TemplateRenderer:
                 "## Layer Direction",
                 "- Document the real dependency direction used by this project.",
                 "- Explain what each layer may import and what it must not import.",
+                "- Keep feature/domain folders as ownership boundaries and place each feature's layers underneath them.",
                 "",
                 "## Profile Architecture Notes",
             ]
@@ -1071,6 +1086,7 @@ class TemplateRenderer:
             "## 계층 방향",
             "- 이 프로젝트가 실제로 사용하는 의존성 방향을 기록한다.",
             "- 각 계층이 import할 수 있는 대상과 금지 대상을 설명한다.",
+            "- 기능/도메인 폴더를 소유권 경계로 두고 각 기능 하위에 계층 폴더를 둔다.",
             "",
             "## 프로필별 아키텍처 메모",
         ]
