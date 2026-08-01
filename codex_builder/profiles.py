@@ -109,6 +109,72 @@ PYTHON_PROFILE = FrameworkProfile(
 )
 
 
+TYPESCRIPT_JAVASCRIPT_PROFILE = FrameworkProfile(
+    key="typescript-javascript",
+    display_name="TypeScript/JavaScript",
+    philosophy_ko="일반 TypeScript/JavaScript 프로젝트는 프레임워크 전제 없이 기능/도메인 폴더를 우선하고, 각 기능 내부에서 service, adapter, model 경계를 분리한다.",
+    philosophy_en="General TypeScript/JavaScript projects should prefer feature/domain folders first, then separate service, adapter, and model boundaries without assuming a framework.",
+    architecture_ko=(
+        "패키지는 기능 또는 도메인 책임 기준으로 나누고 각 기능 폴더 하위에 services, adapters, models/types 등을 둔다.",
+        "공통 모듈은 여러 기능에서 공유하는 정책, 설정, utility에만 사용한다.",
+        "실행 진입점은 입력 파싱과 출력 변환만 담당하고 실제 판단은 application/service 계층에 위임한다.",
+        "핵심 도메인 로직은 filesystem, network, environment, process 전역 객체에 직접 의존하지 않게 한다.",
+        "파일, DB, 외부 API, subprocess 연동은 adapter 또는 infrastructure 모듈 뒤에 둔다.",
+        "권장 흐름: Entrypoint -> Application Service -> Domain/Adapter -> External System.",
+    ),
+    architecture_en=(
+        "Split modules by feature or domain responsibility and place services, adapters, and models/types under each feature folder.",
+        "Use shared modules only for policies, settings, and utilities reused by multiple features.",
+        "Runtime entrypoints should parse input and map output only, then delegate decisions to application/services.",
+        "Keep core domain logic independent from filesystem, network, environment, and process globals.",
+        "Put filesystem, database, external API, and subprocess integrations behind adapter or infrastructure modules.",
+        "Recommended flow: Entrypoint -> Application Service -> Domain/Adapter -> External System.",
+    ),
+    framework_rules_ko=(
+        "프레임워크 전역 객체와 import 시점 부수효과에 의존하지 않는 모듈을 작성한다.",
+        "TypeScript는 공개 함수와 클래스의 타입을 명시하고, JavaScript는 필요한 경우 JSDoc으로 계약을 표현한다.",
+        "비동기 오류는 호출자가 처리할 수 있는 명확한 Error 타입과 메시지로 전달한다.",
+        "표준 런타임과 기존 dependency로 충분한 문제에 불필요한 패키지를 추가하지 않는다.",
+        "순수 계산 로직과 I/O 로직을 분리해 테스트와 재사용이 가능하게 한다.",
+    ),
+    framework_rules_en=(
+        "Write modules that do not depend on framework globals or import-time side effects.",
+        "Use explicit types for public TypeScript functions and classes, and express JavaScript contracts with JSDoc when useful.",
+        "Propagate async failures with clear Error types and messages that callers can handle.",
+        "Do not add dependencies when the runtime and existing packages are sufficient.",
+        "Separate pure computation from I/O so logic stays testable and reusable.",
+    ),
+    api_rules_ko=(
+        "공개 함수, 모듈 export, CLI 옵션은 외부 계약으로 보고 이름과 반환 형식을 안정적으로 관리한다.",
+        "외부 입력은 진입점에서 검증하고 내부 model로 변환한 뒤 service 계층에 전달한다.",
+        "공개 모듈의 오류와 비동기 동작은 호출자가 예측할 수 있게 문서화한다.",
+    ),
+    api_rules_en=(
+        "Treat public functions, module exports, and CLI options as external contracts with stable names and return shapes.",
+        "Validate external input at the entrypoint and convert it into internal models before passing it to services.",
+        "Document public module errors and async behavior so callers can predict them.",
+    ),
+    test_rules_ko=(
+        "순수 로직 테스트와 filesystem/network/environment I/O 테스트를 분리한다.",
+        "외부 의존성은 명시적인 test double과 임시 디렉토리로 격리한다.",
+        "CLI 인자, module export, 비동기 오류 경로는 회귀 테스트로 고정한다.",
+    ),
+    test_rules_en=(
+        "Separate pure logic tests from filesystem, network, and environment I/O tests.",
+        "Isolate external dependencies with explicit test doubles and temporary directories.",
+        "Lock down CLI arguments, module exports, and async failure paths with regression tests.",
+    ),
+    directories=(
+        "src/<feature>/services",
+        "src/<feature>/adapters",
+        "src/<feature>/models",
+        "src/shared",
+        "tests",
+        "scripts",
+    ),
+)
+
+
 FASTAPI_PROFILE = FrameworkProfile(
     key="fastapi",
     display_name="FastAPI",
@@ -484,12 +550,12 @@ FULLSTACK_FASTAPI_REACT_PROFILE = FrameworkProfile(
     test_rules_ko=(
         "백엔드 API 테스트와 프론트엔드 service 테스트가 같은 계약을 검증하게 한다.",
         "주요 사용자 흐름은 E2E 또는 통합 테스트 대상으로 둔다.",
-        "API mock은 실제 docs/api/specification.md와 불일치하지 않게 관리한다.",
+        "API contract test는 실제 docs/api/specification.md와 불일치하지 않게 관리한다.",
     ),
     test_rules_en=(
         "Backend API tests and frontend service tests should verify the same contract.",
         "Cover major user flows with E2E or integration tests.",
-        "Keep API mocks aligned with docs/api/specification.md.",
+        "Keep API contract tests aligned with docs/api/specification.md.",
     ),
     directories=(
         "backend/app/features/<feature>/controllers",
@@ -512,6 +578,7 @@ PROFILES: dict[str, FrameworkProfile] = {
     for profile in (
         FASTAPI_PROFILE,
         PYTHON_PROFILE,
+        TYPESCRIPT_JAVASCRIPT_PROFILE,
         SPRINGBOOT_PROFILE,
         REACT_PROFILE,
         NEXTJS_PROFILE,
@@ -526,6 +593,16 @@ PROFILE_ALIASES: dict[str, str] = {
     "plain-python": "python",
     "vanilla-python": "python",
     "general-python": "python",
+    "ts": "typescript-javascript",
+    "js": "typescript-javascript",
+    "typescript": "typescript-javascript",
+    "javascript": "typescript-javascript",
+    "ts-js": "typescript-javascript",
+    "ts/js": "typescript-javascript",
+    "plain-typescript": "typescript-javascript",
+    "plain-javascript": "typescript-javascript",
+    "vanilla-typescript": "typescript-javascript",
+    "vanilla-javascript": "typescript-javascript",
     "fast-api": "fastapi",
     "spring": "springboot",
     "spring-boot": "springboot",
@@ -543,6 +620,12 @@ def supported_profile_names() -> tuple[str, ...]:
     """Return supported canonical profile names."""
 
     return tuple(PROFILES)
+
+
+def supported_profile_labels() -> tuple[str, ...]:
+    """Return user-facing labels for supported profile choices."""
+
+    return tuple(f"{profile.key} ({profile.display_name})" for profile in PROFILES.values())
 
 
 def canonical_profile_name(name: str) -> str:

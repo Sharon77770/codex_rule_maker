@@ -72,6 +72,46 @@ def test_python_profile_generation(tmp_path):
     assert "CLI 입력은 domain/service logic에 전달하기 전에 별도 input model로 변환한다" in domain_rules
 
 
+def test_typescript_javascript_profile_generation(tmp_path):
+    config = ProjectConfig(project_name="sample-script", stack=("typescript",))
+
+    CodexBuilder().build(config, target_dir=tmp_path)
+
+    architecture_rules = (tmp_path / ".codex" / "ai_rule_developer" / "ARCHITECTURE_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+
+    assert "TypeScript/JavaScript" in service_rules
+    assert "Entrypoint -> Application Service -> Domain/Adapter -> External System" in architecture_rules
+    assert "프레임워크 전역 객체" in service_rules
+
+
+def test_spacing_rules_use_three_and_five_units(tmp_path):
+    config = ProjectConfig(project_name="sample-spacing")
+
+    CodexBuilder().build(config, target_dir=tmp_path)
+
+    code_style = (tmp_path / ".codex" / "ai_rule_developer" / "CODE_STYLE_RULES.md").read_text(encoding="utf-8")
+
+    assert "메서드 간 5칸 공백" in code_style
+    assert "로직 블록 간에는 formatter가 허용하는 범위에서 3칸 공백" in code_style
+    assert "2칸 공백" not in code_style
+
+
+def test_external_integration_rules_do_not_defer_to_mock_or_skeleton(tmp_path):
+    config = ProjectConfig(project_name="sample-integration", external_api_enabled=True)
+
+    CodexBuilder().build(config, target_dir=tmp_path)
+
+    integration_rules = (tmp_path / ".codex" / "ai_rule_developer" / "EXTERNAL_INTEGRATION_RULES.md").read_text(encoding="utf-8").lower()
+    start_prompt = (tmp_path / ".codex" / "codex_start_prompt.txt").read_text(encoding="utf-8").lower()
+
+    assert "mock" not in integration_rules
+    assert "skeleton" not in integration_rules
+    assert "pass" not in integration_rules
+    assert "외부 연동 구현" in start_prompt
+    assert "external integration skeleton" not in start_prompt
+
+
 def test_react_profile_generation(tmp_path):
     config = ProjectConfig(project_name="sample-web", stack=("react",))
 

@@ -10,7 +10,7 @@ from typing import Optional
 from codex_builder.builder import CodexBuilder, CodexBuildError, ExistingCodexError
 from codex_builder.models import ConfigError
 from codex_builder.prompt import PromptAbort, PromptSession
-from codex_builder.profiles import UnknownProfileError, supported_profile_names
+from codex_builder.profiles import UnknownProfileError, supported_profile_labels
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -22,7 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--description", help="Short project description.")
     parser.add_argument(
         "--stack",
-        help=f"Comma-separated stack profiles. Supported: {', '.join(supported_profile_names())}.",
+        help=f"Comma-separated stack profiles. Supported: {', '.join(supported_profile_labels())}.",
     )
     parser.add_argument("--db", "--database", dest="database", help="Database name, for example mysql or postgres.")
     parser.add_argument("--auth", help="Whether authentication is used: yes/no.")

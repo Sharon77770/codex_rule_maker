@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-from codex_builder.cli import main
+from codex_builder.cli import build_parser, main
 
 
 def test_cli_generates_with_options_only(tmp_path):
@@ -30,6 +30,14 @@ def test_cli_generates_with_options_only(tmp_path):
     assert (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").exists()
     assert (tmp_path / ".codex" / "ref_docs").is_dir()
     assert (tmp_path / "docs" / "api" / "specification.md").exists()
+
+
+def test_cli_profile_choices_include_plain_python_and_typescript_javascript():
+    help_text = build_parser().format_help()
+
+    assert "python (Python)" in help_text
+    assert "typescript-javascript" in help_text
+    assert "TypeScript/JavaScript" in help_text
 
 
 def test_cli_generates_python_profile(tmp_path):

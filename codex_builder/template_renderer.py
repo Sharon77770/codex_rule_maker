@@ -85,7 +85,7 @@ class TemplateRenderer:
                     "- Do not put all logic in one file for convenience.",
                     "- Do not place business logic in controllers, route handlers, or UI components.",
                     "- Do not return persistence entities directly from public APIs.",
-                    "- Do not complete external integrations with fake implementations.",
+                "- Implement external integrations against their confirmed contracts and keep failure behavior explicit.",
                     "- Do not add core code without documenting the intent when the behavior is non-obvious.",
                 ]
             )
@@ -119,7 +119,7 @@ class TemplateRenderer:
                 "- 편의를 위해 모든 로직을 한 파일에 몰아넣지 않는다.",
                 "- controller, route handler, UI component에 비즈니스 로직을 넣지 않는다.",
                 "- persistence entity를 public API 응답으로 직접 반환하지 않는다.",
-                "- 외부 연동을 가짜 구현으로 완성한 것처럼 만들지 않는다.",
+                "- 외부 연동은 확인된 계약을 기준으로 구현하고 실패 동작을 명시한다.",
                 "- 동작이 비명시적인 핵심 코드에 의도 설명 없이 코드를 추가하지 않는다.",
             ]
         )
@@ -139,7 +139,7 @@ class TemplateRenderer:
                 lines.extend(
                     [
                         "- External API calls must go through a dedicated client/adapter layer.",
-                        "- Do not fake completed external integrations. Leave clear TODOs when credentials or contracts are missing.",
+                        "- Implement confirmed credentials, contracts, schemas, and failure handling together.",
                     ]
                 )
             if config.database:
@@ -160,7 +160,7 @@ class TemplateRenderer:
             lines.extend(
                 [
                     "- 외부 API 호출은 반드시 전용 client/adapter 계층을 통해 수행한다.",
-                    "- 계약이나 인증 정보가 없는 외부 연동은 완성된 것처럼 꾸미지 말고 명확한 TODO를 남긴다.",
+                    "- 외부 연동은 인증 정보, 계약, schema, 실패 처리를 실제 구현과 함께 관리한다.",
                 ]
             )
         if config.database:
@@ -263,7 +263,7 @@ class TemplateRenderer:
                 "[Spacing Rules]",
                 "- Keep method boundaries visually obvious. Use the repository's formatter when it enforces exact blank lines.",
                 "- When the formatter allows manual spacing, keep five blank-line units between methods.",
-                "- Inside a method, separate unrelated logic blocks with two blank-line units when the formatter allows it.",
+                "- Inside a method, separate unrelated logic blocks with three blank-line units when the formatter allows it.",
                 "- If a function signature, expression, query, JSX block, or builder chain spans multiple lines, leave a blank line before starting the next logic block.",
                 "- Do not compress validation, transformation, persistence, and response mapping into one dense block.",
                 "",
@@ -323,7 +323,7 @@ class TemplateRenderer:
                 "[공백 규칙]",
                 "- 메서드 경계는 눈으로 분명히 구분되어야 한다. 정확한 공백 수는 저장소 formatter가 강제하면 formatter를 따른다.",
                 "- formatter가 수동 공백을 허용하면 메서드 간 5칸 공백을 둔다.",
-                "- 메서드 내부의 연관 없는 로직 블록 간에는 formatter가 허용하는 범위에서 2칸 공백을 둔다.",
+                "- 메서드 내부의 연관 없는 로직 블록 간에는 formatter가 허용하는 범위에서 3칸 공백을 둔다.",
                 "- 함수 시그니처, 표현식, 쿼리, JSX block, builder chain이 여러 줄에 걸쳐 작성되면 다음 로직 블록 전에는 반드시 공백을 둔다.",
                 "- validation, transformation, persistence, response mapping을 하나의 빽빽한 블록으로 압축하지 않는다.",
                 "",
@@ -787,34 +787,16 @@ class TemplateRenderer:
                 "- Third-party HTTP APIs or SDKs",
                 "- Any system outside the current repository process",
                 "",
-                "[Rules]",
-                "- Do not implement an integration as complete unless credentials, contract, timeout behavior, and failure mapping are known.",
-                "- When the contract is missing, write only the class/method boundary and leave the body as `pass` or the language equivalent.",
-                "- Add TODO comments that state required input, expected output, upstream endpoint or SDK method, timeout, retry, and error mapping.",
+                "[Implementation]",
+                "- Implement external calls with the confirmed credentials, contract, timeout behavior, and failure mapping.",
                 "- Services call integrations through narrow methods that describe business intent.",
                 "- Convert upstream DTOs into internal DTOs before returning data to callers.",
-                "",
-                "[Python Skeleton]",
-                "```python",
-                "def request_external_job(self, request_dto: ExternalJobRequestDto) -> ExternalJobResponseDto:",
-                '    """Request a job from the external system."""',
-                "    # TODO: define upstream endpoint, request fields, response fields, timeout, retry, and failure mapping.",
-                "    pass",
-                "```",
+                "- Keep request/response schemas and integration documentation synchronized with the implementation.",
                 "",
                 "[Prohibited]",
-                "- Fake API implementations.",
-                "- Random sample data that pretends to be upstream data.",
+                "- Fabricated upstream responses or behavior that bypasses the confirmed contract.",
                 "- Calling external HTTP or SDK code directly from controllers or UI components.",
             ]
-            if not config.external_api_enabled:
-                lines.extend(
-                    [
-                        "",
-                        "[When External APIs Are Added Later]",
-                        "- Update project configuration and docs before introducing the integration.",
-                    ]
-                )
             for profile in profiles:
                 lines.extend(["", f"[{profile.display_name} Integration Notes]"])
                 lines.extend(self._bullets(self._profile_external_rules(profile, config.language)))
@@ -831,34 +813,15 @@ class TemplateRenderer:
             "- Third-party HTTP API 또는 SDK",
             "- 현재 저장소 프로세스 밖의 모든 시스템",
             "",
-            "[규칙]",
-            "- 인증 정보, 계약, timeout, 실패 매핑이 확인되지 않은 연동은 완성 구현으로 작성하지 않는다.",
-            "- 계약이 없으면 class/method 경계만 작성하고 본문은 `pass` 또는 해당 언어의 미구현 표현으로 둔다.",
-            "- TODO 주석에는 필요한 입력, 기대 출력, upstream endpoint 또는 SDK method, timeout, retry, error mapping을 명확히 적는다.",
+            "[구현 규칙]",
+            "- 확인된 인증 정보, 계약, timeout, 실패 매핑을 기준으로 외부 호출을 구현한다.",
             "- Service는 비즈니스 의도를 드러내는 좁은 메서드로 외부 연동을 호출한다.",
             "- Upstream DTO는 내부 DTO로 변환한 뒤 호출자에게 반환한다.",
-            "",
-            "[Python 뼈대]",
-            "```python",
-            "def request_external_job(self, request_dto: ExternalJobRequestDto) -> ExternalJobResponseDto:",
-            '    """외부 시스템에 작업 생성을 요청한다."""',
-            "    # TODO: upstream endpoint, request field, response field, timeout, retry, failure mapping 정의 필요.",
-            "    pass",
-            "```",
+            "- Request/Response schema와 연동 문서는 실제 구현과 함께 갱신한다.",
             "",
             "[금지]",
-            "- 외부 API fake 구현",
-            "- upstream 데이터처럼 보이는 임의 샘플 데이터 생성",
             "- controller 또는 UI component에서 외부 HTTP/SDK 직접 호출",
         ]
-        if not config.external_api_enabled:
-            lines.extend(
-                [
-                    "",
-                    "[나중에 외부 API가 추가되는 경우]",
-                    "- 연동을 도입하기 전에 프로젝트 설정과 문서를 먼저 갱신한다.",
-                ]
-            )
         for profile in profiles:
             lines.extend(["", f"[{profile.display_name} 연동 메모]"])
             lines.extend(self._bullets(self._profile_external_rules(profile, config.language)))
@@ -1606,7 +1569,7 @@ class TemplateRenderer:
                     "   - API design",
                     "   - Service logic",
                     "   - Controller/route/UI boundary work",
-                    "   - External integration skeleton",
+                    "   - External integration",
                     "   - Refactoring",
                     "   - Documentation",
                     "5. Apply the `.codex` rules that match the task type before editing files.",
@@ -1620,7 +1583,7 @@ class TemplateRenderer:
                     "- Do not invent behavior that is not defined by the request or reference documents.",
                     "- Do not treat `.codex/ref_docs` as generated project documentation; it is a user-managed reference space.",
                     "- Keep project specs in root `docs/`.",
-                    "- For external integrations without a confirmed contract, write only class/method boundaries and TODOs; leave the body unimplemented.",
+                    "- For external integrations, implement the confirmed contract through a dedicated client/adapter and keep its documentation synchronized.",
                     "- After code changes, update required documentation in the same task.",
                     "",
                     "Response behavior:",
@@ -1659,7 +1622,7 @@ class TemplateRenderer:
                 "   - API 설계",
                 "   - 서비스 로직 작성",
                 "   - 컨트롤러/라우트/UI 경계 작업",
-                "   - 외부 연동 메서드 뼈대 작성",
+                "   - 외부 연동 구현",
                 "   - 리팩토링",
                 "   - 문서화",
                 "5. 판단한 작업 유형에 맞는 `.codex` 규칙을 우선 적용하라.",
@@ -1674,7 +1637,7 @@ class TemplateRenderer:
                 "- 요청이나 참고 문서에 없는 기능을 임의로 추가하지 않는다.",
                 "- `.codex/ref_docs`를 생성된 프로젝트 명세 위치로 취급하지 않는다. 이 위치는 사용자 관리 참고자료 공간이다.",
                 "- 프로젝트 명세는 프로젝트 루트의 `docs/`에 유지한다.",
-                "- 계약이 확인되지 않은 외부 연동은 class/method 경계와 TODO만 작성하고 본문은 미구현으로 둔다.",
+                "- 외부 연동은 확인된 계약을 전용 client/adapter로 구현하고 관련 문서를 실제 동작과 함께 갱신한다.",
                 "- 코드 수정 후 필요한 문서도 같은 작업 안에서 함께 수정한다.",
                 "",
                 "응답 방식도 아래를 따라라.",
@@ -1853,7 +1816,7 @@ class TemplateRenderer:
                 "fullstack-fastapi-react": (
                     "Backend owns private upstream integrations; frontend calls backend services only.",
                     "Document any backend-to-upstream mapping in docs/api/specification.md when it affects public behavior.",
-                    "Keep frontend mocks aligned with backend API contracts.",
+                    "Keep frontend API contract tests aligned with backend API contracts.",
                 ),
             }
             return rules.get(profile.key, ("Keep external integrations behind framework-appropriate adapter boundaries.",))
@@ -1892,7 +1855,7 @@ class TemplateRenderer:
             "fullstack-fastapi-react": (
                 "Private upstream integration은 backend가 소유하고 frontend는 backend service만 호출한다.",
                 "공개 동작에 영향을 주는 backend-to-upstream mapping은 docs/api/specification.md에 문서화한다.",
-                "Frontend mock은 backend API contract와 불일치하지 않게 관리한다.",
+                "Frontend API contract tests는 backend API contract와 불일치하지 않게 관리한다.",
             ),
         }
         return rules.get(profile.key, ("외부 연동은 framework에 맞는 adapter 경계 뒤에 둔다.",))

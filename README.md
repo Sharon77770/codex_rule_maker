@@ -1,5 +1,7 @@
 # codex-rule-maker
 
+현재 버전: `0.4.0`
+
 `codex-rule-maker`는 프로젝트 루트에 `.codex` 규칙 폴더와 `docs/` 프로젝트 문서 템플릿을 자동 구성하는 Python CLI 도구입니다. 사용자가 프로젝트 이름, 설명, 스택, DB, 인증 여부, 외부 API 여부, 문서화 수준, 문서 언어를 입력하면 Codex가 작업 전에 읽을 개발 규칙과 프로젝트 문서 구조를 생성합니다.
 
 ## 설치
@@ -195,7 +197,8 @@ docs/
 ## 지원 프레임워크 프로필
 
 - `fastapi`: 기능 폴더 하위 controller/service/repository/schema/entity 분리
-- `python`: 기능/도메인 폴더 하위 service/adapter/model/CLI 경계 분리
+- `python`: 프레임워크 없는 Python 프로젝트의 기능/도메인 폴더 하위 service/adapter/model/CLI 경계 분리
+- `typescript-javascript`: 프레임워크 없는 TypeScript/JavaScript 프로젝트의 기능/도메인 폴더 하위 service/adapter/model 경계 분리
 - `springboot`: 기능 package 하위 controller/service/repository/entity/dto 분리
 - `react`: 기능 폴더 하위 page/component/hook/service/store 분리
 - `nextjs`: App Router 유지, 기능 폴더 하위 component/service/repository/type 분리
@@ -207,6 +210,8 @@ docs/
 ```bash
 codex-init --stack fastapi,react
 codex-init --stack python
+codex-init --stack typescript
+codex-init --stack javascript
 codex-init --stack fullstack-fastapi-react
 codex-init --stack nextjs
 ```
@@ -217,7 +222,7 @@ codex-init --stack nextjs
 - `--language en`을 사용하면 영어 문서를 생성합니다.
 - `--docs strict`는 코드 변경 후 문서 업데이트 필수 규칙을 포함합니다.
 - `--auth yes`는 인증/권한 규칙을 포함합니다.
-- `--external-api yes`는 외부 연동 계층 분리 규칙을 포함합니다.
+- `--external-api yes`는 확인된 계약을 기준으로 실제 외부 연동을 구현하기 위한 client/adapter 및 계약 문서 규칙을 포함합니다.
 - `--db mysql`처럼 DB를 지정하면 DB, Repository, Schema 관련 규칙을 포함합니다.
 - 프로젝트 명세 템플릿은 `.codex/ref_docs`가 아니라 `docs/architecture`, `docs/api`, `docs/database`에 생성됩니다.
 

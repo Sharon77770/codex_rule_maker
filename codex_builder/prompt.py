@@ -14,7 +14,7 @@ from codex_builder.constants import (
     DEFAULT_STACK,
 )
 from codex_builder.models import ConfigError, ProjectConfig, parse_yes_no
-from codex_builder.profiles import supported_profile_names
+from codex_builder.profiles import supported_profile_labels
 from codex_builder.validator import (
     validate_docs_level,
     validate_existing_directory,
@@ -149,8 +149,8 @@ class PromptSession:
 
     def prompt_stack(self) -> tuple[str, ...]:
         self._write("지원 프로필:")
-        for profile_name in supported_profile_names():
-            self._write(f"- {profile_name}")
+        for profile_label in supported_profile_labels():
+            self._write(f"- {profile_label}")
 
         while True:
             raw_stack = self.prompt_text("사용 스택", ",".join(DEFAULT_STACK))
