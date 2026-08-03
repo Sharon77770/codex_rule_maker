@@ -157,6 +157,7 @@ DB: mysql
 | `--external-api` | 외부 API 사용 여부: `yes` 또는 `no` | `no` |
 | `--docs` | 문서화 수준: `light`, `standard`, `strict` | `standard` |
 | `--language` | 문서 언어: `ko`, `en` | `ko` |
+| `--agents-md` / `--no-agents-md` | 루트 `AGENTS.md` 진입점 생성 여부 | 생성 |
 | `--interactive` | 대화형 입력 사용 및 최종 확인 표시 | 비활성 |
 | `--force` | 기존 `.codex`가 있으면 백업 후 재생성 | 비활성 |
 | `--overwrite` | `--force`와 함께 기존 `.codex` 삭제 후 재생성 | 비활성 |
@@ -165,6 +166,7 @@ DB: mysql
 ## 생성 구조
 
 ```text
+AGENTS.md
 .codex/
 ├── ai_rule_developer/
 │   ├── GLOBAL_RULES.md
@@ -191,6 +193,10 @@ docs/
 └── database/
     └── schema.md
 ```
+
+루트 `AGENTS.md`는 코딩 에이전트가 세션 시작 시 **자동으로 읽는 유일한 진입점**입니다. Codex는 `~/.codex/AGENTS.md`부터 git 루트, 현재 디렉토리까지 순서대로 `AGENTS.md`를 읽어 지시문 체인을 만들며([OpenAI Codex 문서](https://developers.openai.com/codex/guides/agents-md.md)), `.codex/ai_rule_developer/*.md`는 자동 로드 대상이 아닙니다. 따라서 생성된 `AGENTS.md`는 상세 규칙을 복사하지 않고 **작업 유형별로 어떤 `.codex` 문서를 읽어야 하는지 안내하는 라우팅 테이블**과 타협 불가 경계·완료 기준만 담아 짧게 유지합니다. `AGENTS.md`는 Linux Foundation 산하 Agentic AI Foundation이 관리하는 개방 표준이라 Cursor, Copilot, Gemini CLI, Cline 등도 같은 파일을 읽습니다([agents.md](https://agents.md/)).
+
+기존 `AGENTS.md`가 있으면 덮어쓰지 않으므로 직접 수정한 내용은 재생성 후에도 유지됩니다. 생성을 원하지 않으면 `--no-agents-md`를 사용하세요.
 
 `ai_rule_developer`는 코딩할 때 지켜야 하는 규칙입니다. `ref_docs`는 외부 아키텍처 문서, PRD, 리서치, 벤더 문서처럼 사용자가 임의로 추가하는 참고자료 공간이므로 디렉토리만 생성합니다. 프로젝트 자체 명세는 루트 `docs/` 아래에 생성되며, 기존 `docs/` 파일이 있으면 덮어쓰지 않습니다. `codex_start_prompt.txt`는 Codex가 작업 시작 전에 `.codex` 문서를 먼저 읽고 규칙 우선순위를 적용하도록 지시합니다.
 

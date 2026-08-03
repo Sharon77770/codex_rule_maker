@@ -34,6 +34,7 @@ jobs:
           mkdir -p "${RUNNER_TEMP}/smoke"
           cd "${RUNNER_TEMP}/smoke"
           codex-init --name ci-smoke --stack fastapi --db mysql --auth yes --external-api yes --docs strict
+          test -f AGENTS.md
           test -f .codex/codex_start_prompt.txt
           test -f .codex/ai_rule_developer/GLOBAL_RULES.md
           test -f docs/api/specification.md

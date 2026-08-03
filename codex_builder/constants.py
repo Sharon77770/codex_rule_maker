@@ -7,6 +7,12 @@ AI_RULE_DIR_NAME = "ai_rule_developer"
 REF_DOCS_DIR_NAME = "ref_docs"
 DOCS_DIR_NAME = "docs"
 START_PROMPT_FILE_NAME = "codex_start_prompt.txt"
+AGENTS_FILE_NAME = "AGENTS.md"
+
+# Codex reads project instruction files up to this size by default
+# (`project_doc_max_bytes`). Other agents apply similar budgets, so the generated
+# AGENTS.md is meant to stay far below this and delegate detail to `.codex`.
+AGENTS_FILE_SOFT_LIMIT_BYTES = 4096
 
 RULE_FILE_NAMES = (
     "GLOBAL_RULES.md",

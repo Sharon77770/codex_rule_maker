@@ -22,7 +22,8 @@ def test_default_generation_success(tmp_path):
     assert (tmp_path / "docs" / "api" / "specification.md").exists()
     assert (tmp_path / "docs" / "database" / "schema.md").exists()
     assert (tmp_path / ".codex" / "codex_start_prompt.txt").exists()
-    assert len(result.written_files) == 17
+    assert (tmp_path / "AGENTS.md").exists()
+    assert len(result.written_files) == 18
 
     start_prompt = (tmp_path / ".codex" / "codex_start_prompt.txt").read_text(encoding="utf-8")
     assert "지금부터 이 저장소의 작업을 시작한다" in start_prompt

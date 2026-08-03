@@ -31,6 +31,7 @@ class ProjectConfig:
     external_api_enabled: bool = False
     docs_level: str = DEFAULT_DOCS_LEVEL
     language: str = DEFAULT_LANGUAGE
+    agents_md_enabled: bool = True
 
     def __post_init__(self) -> None:
         project_name = self.project_name.strip()

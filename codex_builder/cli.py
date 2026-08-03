@@ -29,6 +29,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--external-api", dest="external_api", help="Whether external API integrations are used: yes/no.")
     parser.add_argument("--docs", dest="docs_level", help="Documentation strictness: light, standard, strict.")
     parser.add_argument("--language", help="Document language: ko or en.")
+    parser.add_argument(
+        "--agents-md",
+        dest="agents_md",
+        action="store_true",
+        default=None,
+        help="Generate a root AGENTS.md entrypoint. Enabled by default.",
+    )
+    parser.add_argument(
+        "--no-agents-md",
+        dest="agents_md",
+        action="store_false",
+        help="Skip the root AGENTS.md entrypoint.",
+    )
     parser.add_argument("--interactive", action="store_true", help="Prompt for missing values and always show final confirmation.")
     parser.add_argument("--force", action="store_true", help="Replace an existing .codex folder. Default force behavior creates a backup.")
     parser.add_argument(
