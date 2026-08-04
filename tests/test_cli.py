@@ -59,7 +59,7 @@ def test_cli_generates_python_profile(tmp_path):
     )
 
     assert result == 0
-    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").read_text(encoding="utf-8")
     assert "Python" in service_rules
     assert "`main()` 진입점" in service_rules
 
@@ -144,7 +144,7 @@ def test_cli_reprompts_invalid_stack_value(tmp_path, monkeypatch):
     result = main(["--target-dir", str(tmp_path), "--name", "prompt-api"])
 
     assert result == 0
-    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").read_text(encoding="utf-8")
     assert "Next.js" in service_rules
 
 

@@ -157,12 +157,8 @@ Follow the existing formatter and linter first. When the formatter does not deci
 - Files that mix unrelated layers.
 - Formatting that fights the repository's configured formatter.
 
-[FastAPI Style Notes]
-- APIRouter should only handle routing and dependency wiring.
-- Services should not directly depend on FastAPI Response, Depends, or Request.
-- Repositories wrap storage APIs such as SQLAlchemy or SQLModel.
-- Represent errors as domain/service exceptions first, then map them to HTTP statuses in controllers.
-- Move background jobs, external calls, and long-running work into explicit adapters/clients below services.
+[Framework Rules]
+- Framework-specific rules live in `GLOBAL_RULES.md`. Apply them together with this document.
 
 ========================================================================
 # file: .codex/ai_rule_developer/DOCUMENT_RULE.md
@@ -386,12 +382,26 @@ The service/application layer is the center of business logic.
 - Mixing external API calls directly into unrelated business logic.
 - Cramming complex branching into one method.
 
-[FastAPI Service Notes]
-- APIRouter should only handle routing and dependency wiring.
-- Services should not directly depend on FastAPI Response, Depends, or Request.
-- Repositories wrap storage APIs such as SQLAlchemy or SQLModel.
-- Represent errors as domain/service exceptions first, then map them to HTTP statuses in controllers.
-- Move background jobs, external calls, and long-running work into explicit adapters/clients below services.
+[Framework Rules]
+- Framework-specific rules live in `GLOBAL_RULES.md`. Apply them together with this document.
+
+========================================================================
+# file: .codex/ai_rule_developer/TEST_RULES.md
+========================================================================
+# Test Rules - snapshot-full-en
+
+## Base Rules
+- Add or update tests when behavior changes.
+- Cover success cases, validation failures, authorization failures, and important error paths.
+- Keep tests aligned with public contracts rather than implementation trivia.
+
+## FastAPI
+- Isolate service tests with repository/client doubles.
+- Use TestClient or httpx-based API tests to verify request/response contracts.
+- Verify repository tests against database schema and query behavior separately.
+
+## Database Tests
+- Verify repository behavior and migration/schema assumptions for `postgres`.
 
 ========================================================================
 # file: .codex/codex_start_prompt.txt
@@ -468,6 +478,7 @@ Load only what the current task needs:
 | Entity, schema, domain state | `.codex/ai_rule_developer/DOMAIN_MODEL_RULES.md`, `docs/database/schema.md` |
 | Use-case and business logic | `.codex/ai_rule_developer/SERVICE_LAYER_RULES.md` |
 | Third-party or upstream integration | `.codex/ai_rule_developer/EXTERNAL_INTEGRATION_RULES.md` |
+| Tests | `.codex/ai_rule_developer/TEST_RULES.md` |
 | Documentation updates | `.codex/ai_rule_developer/DOCUMENT_RULE.md` |
 
 ## Precedence

@@ -7,6 +7,8 @@
 
 ### Added
 
+- `TEST_RULES.md` 생성. 렌더러와 프로필별 테스트 규칙 데이터는 이미 있었지만 출력 목록에
+  연결되어 있지 않아 실제로는 생성되지 않았습니다. AGENTS.md 라우팅 표에도 추가했습니다.
 - 루트 `AGENTS.md` 진입점 생성. 코딩 에이전트가 자동으로 읽는 상위 지시문 경로를 확보하기 위한
   변경입니다. `.codex/` 아래 문서는 자동 로드 대상이 아니므로 기존에는 `codex_start_prompt.txt`를
   사용자가 직접 붙여넣지 않으면 생성된 규칙이 적용되지 않았습니다. 상세 규칙을 복사하지 않고
@@ -21,8 +23,16 @@
   스모크 실행, 별도 job에서 `python -m build` 및 `twine check`를 수행합니다.
 - 이 CHANGELOG.
 
+### Changed
+
+- 프레임워크별 규칙을 `GLOBAL_RULES.md` 한 곳에서만 정의합니다. 기존에는 동일한 문장이
+  `GLOBAL_RULES.md`, `CODE_STYLE_RULES.md`, `SERVICE_LAYER_RULES.md`에 그대로 세 번
+  들어갔습니다. 두 문서에는 참조 문구를 남깁니다.
+
 ### Removed
 
+- 호출되지 않던 렌더러 메서드 5종 제거(`_render_framework_rules`, `_render_project_overview`,
+  `_render_feature_spec`, `_render_api_spec`, `_render_db_spec`). 총 208줄.
 - 저장소에 커밋되어 있던 `release_0_3_0/` 빌드 산출물(`.whl`, `.tar.gz`). 배포 아티팩트는
   버전 관리 대상이 아니며 GitHub Releases 또는 PyPI에서 받을 수 있습니다.
 

@@ -132,12 +132,8 @@ docs/database
 - 서로 다른 계층을 섞은 파일
 - 저장소 formatter와 충돌하는 포맷팅
 
-[FastAPI 스타일 메모]
-- APIRouter는 라우팅과 의존성 연결만 담당한다.
-- Service가 FastAPI Response, Depends, Request에 직접 의존하지 않게 한다.
-- Repository는 SQLAlchemy, SQLModel 등 실제 저장소 API를 감싸는 경계로 둔다.
-- 예외는 도메인/서비스 예외로 먼저 표현하고 controller에서 HTTP 상태로 변환한다.
-- 배경 작업, 외부 호출, 긴 작업은 service 하위의 명시적 adapter/client로 분리한다.
+[프레임워크 규칙]
+- 프레임워크별 규칙은 `GLOBAL_RULES.md`에 있다. 이 문서와 함께 적용한다.
 
 ========================================================================
 # file: .codex/ai_rule_developer/DOCUMENT_RULE.md
@@ -348,12 +344,23 @@ Service/Application 계층은 비즈니스 로직의 중심이다.
 - 외부 API 호출을 무관한 비즈니스 로직에 직접 섞기
 - 복잡한 분기 로직을 하나의 메서드에 몰아넣기
 
-[FastAPI Service Notes]
-- APIRouter는 라우팅과 의존성 연결만 담당한다.
-- Service가 FastAPI Response, Depends, Request에 직접 의존하지 않게 한다.
-- Repository는 SQLAlchemy, SQLModel 등 실제 저장소 API를 감싸는 경계로 둔다.
-- 예외는 도메인/서비스 예외로 먼저 표현하고 controller에서 HTTP 상태로 변환한다.
-- 배경 작업, 외부 호출, 긴 작업은 service 하위의 명시적 adapter/client로 분리한다.
+[프레임워크 규칙]
+- 프레임워크별 규칙은 `GLOBAL_RULES.md`에 있다. 이 문서와 함께 적용한다.
+
+========================================================================
+# file: .codex/ai_rule_developer/TEST_RULES.md
+========================================================================
+# 테스트 규칙 - snapshot-default
+
+## 기본 규칙
+- 동작이 바뀌면 테스트를 추가하거나 수정한다.
+- 성공 케이스, validation 실패, authorization 실패, 중요한 오류 경로를 검증한다.
+- 구현 세부사항보다 공개 계약과 사용자 관찰 가능 동작을 기준으로 테스트한다.
+
+## FastAPI
+- Service 테스트는 repository/client를 대체 객체로 격리한다.
+- API 테스트는 TestClient 또는 httpx 기반으로 요청/응답 계약을 검증한다.
+- Repository 테스트는 DB 스키마와 쿼리 동작을 별도로 검증한다.
 
 ========================================================================
 # file: .codex/codex_start_prompt.txt
@@ -431,6 +438,7 @@ Service/Application 계층은 비즈니스 로직의 중심이다.
 | Entity, schema, 도메인 상태 | `.codex/ai_rule_developer/DOMAIN_MODEL_RULES.md`, `docs/database/schema.md` |
 | 유스케이스와 비즈니스 로직 | `.codex/ai_rule_developer/SERVICE_LAYER_RULES.md` |
 | 외부 연동 | `.codex/ai_rule_developer/EXTERNAL_INTEGRATION_RULES.md` |
+| 테스트 | `.codex/ai_rule_developer/TEST_RULES.md` |
 | 문서 갱신 | `.codex/ai_rule_developer/DOCUMENT_RULE.md` |
 
 ## 우선순위

@@ -14,6 +14,7 @@ def test_default_generation_success(tmp_path):
     assert result.codex_dir == tmp_path / ".codex"
     assert (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").exists()
     assert (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").exists()
+    assert (tmp_path / ".codex" / "ai_rule_developer" / "TEST_RULES.md").exists()
     assert (tmp_path / ".codex" / "ai_rule_developer" / "DOMAIN_MODEL_RULES.md").exists()
     assert (tmp_path / ".codex" / "ai_rule_developer" / "EXTERNAL_INTEGRATION_RULES.md").exists()
     assert (tmp_path / ".codex" / "ref_docs").is_dir()
@@ -23,7 +24,7 @@ def test_default_generation_success(tmp_path):
     assert (tmp_path / "docs" / "database" / "schema.md").exists()
     assert (tmp_path / ".codex" / "codex_start_prompt.txt").exists()
     assert (tmp_path / "AGENTS.md").exists()
-    assert len(result.written_files) == 18
+    assert len(result.written_files) == 19
 
     start_prompt = (tmp_path / ".codex" / "codex_start_prompt.txt").read_text(encoding="utf-8")
     assert "지금부터 이 저장소의 작업을 시작한다" in start_prompt
@@ -44,7 +45,7 @@ def test_fastapi_profile_generation(tmp_path):
 
     CodexBuilder().build(config, target_dir=tmp_path)
 
-    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").read_text(encoding="utf-8")
     architecture_rules = (tmp_path / ".codex" / "ai_rule_developer" / "ARCHITECTURE_RULES.md").read_text(encoding="utf-8")
     document_rules = (tmp_path / ".codex" / "ai_rule_developer" / "DOCUMENT_RULE.md").read_text(encoding="utf-8")
 
@@ -63,7 +64,7 @@ def test_python_profile_generation(tmp_path):
     CodexBuilder().build(config, target_dir=tmp_path)
 
     architecture_rules = (tmp_path / ".codex" / "ai_rule_developer" / "ARCHITECTURE_RULES.md").read_text(encoding="utf-8")
-    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").read_text(encoding="utf-8")
     domain_rules = (tmp_path / ".codex" / "ai_rule_developer" / "DOMAIN_MODEL_RULES.md").read_text(encoding="utf-8")
 
     assert "Python" in service_rules
@@ -79,7 +80,7 @@ def test_typescript_javascript_profile_generation(tmp_path):
     CodexBuilder().build(config, target_dir=tmp_path)
 
     architecture_rules = (tmp_path / ".codex" / "ai_rule_developer" / "ARCHITECTURE_RULES.md").read_text(encoding="utf-8")
-    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").read_text(encoding="utf-8")
 
     assert "TypeScript/JavaScript" in service_rules
     assert "Entrypoint -> Application Service -> Domain/Adapter -> External System" in architecture_rules
@@ -119,7 +120,7 @@ def test_react_profile_generation(tmp_path):
     CodexBuilder().build(config, target_dir=tmp_path)
 
     architecture_rules = (tmp_path / ".codex" / "ai_rule_developer" / "ARCHITECTURE_RULES.md").read_text(encoding="utf-8")
-    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "SERVICE_LAYER_RULES.md").read_text(encoding="utf-8")
+    service_rules = (tmp_path / ".codex" / "ai_rule_developer" / "GLOBAL_RULES.md").read_text(encoding="utf-8")
 
     assert "Page -> Hook/Store -> Service -> API" in architecture_rules
     assert "컴포넌트 안에서 fetch/axios 호출을 직접 수행하지 않는다" in service_rules

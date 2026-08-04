@@ -131,11 +131,8 @@ docs/database
 - 서로 다른 계층을 섞은 파일
 - 저장소 formatter와 충돌하는 포맷팅
 
-[Next.js 스타일 메모]
-- 'use client'는 필요한 파일에만 선언한다.
-- 서버 전용 비밀값과 브라우저 공개 환경 변수를 구분한다.
-- 데이터 변경은 server action 또는 route handler로 경계를 명확히 한다.
-- 캐시, revalidate, dynamic 설정은 데이터 신선도 요구사항과 함께 문서화한다.
+[프레임워크 규칙]
+- 프레임워크별 규칙은 `GLOBAL_RULES.md`에 있다. 이 문서와 함께 적용한다.
 
 ========================================================================
 # file: .codex/ai_rule_developer/DOCUMENT_RULE.md
@@ -344,11 +341,23 @@ Service/Application 계층은 비즈니스 로직의 중심이다.
 - 외부 API 호출을 무관한 비즈니스 로직에 직접 섞기
 - 복잡한 분기 로직을 하나의 메서드에 몰아넣기
 
-[Next.js Service Notes]
-- 'use client'는 필요한 파일에만 선언한다.
-- 서버 전용 비밀값과 브라우저 공개 환경 변수를 구분한다.
-- 데이터 변경은 server action 또는 route handler로 경계를 명확히 한다.
-- 캐시, revalidate, dynamic 설정은 데이터 신선도 요구사항과 함께 문서화한다.
+[프레임워크 규칙]
+- 프레임워크별 규칙은 `GLOBAL_RULES.md`에 있다. 이 문서와 함께 적용한다.
+
+========================================================================
+# file: .codex/ai_rule_developer/TEST_RULES.md
+========================================================================
+# 테스트 규칙 - snapshot-next
+
+## 기본 규칙
+- 동작이 바뀌면 테스트를 추가하거나 수정한다.
+- 성공 케이스, validation 실패, authorization 실패, 중요한 오류 경로를 검증한다.
+- 구현 세부사항보다 공개 계약과 사용자 관찰 가능 동작을 기준으로 테스트한다.
+
+## Next.js
+- 서버 로직은 service 단위 테스트로 우선 검증한다.
+- 클라이언트 컴포넌트는 사용자 상호작용 중심으로 검증한다.
+- 라우팅과 인증 흐름은 통합 테스트 또는 E2E 테스트로 검증한다.
 
 ========================================================================
 # file: .codex/codex_start_prompt.txt
@@ -426,6 +435,7 @@ Service/Application 계층은 비즈니스 로직의 중심이다.
 | Entity, schema, 도메인 상태 | `.codex/ai_rule_developer/DOMAIN_MODEL_RULES.md`, `docs/database/schema.md` |
 | 유스케이스와 비즈니스 로직 | `.codex/ai_rule_developer/SERVICE_LAYER_RULES.md` |
 | 외부 연동 | `.codex/ai_rule_developer/EXTERNAL_INTEGRATION_RULES.md` |
+| 테스트 | `.codex/ai_rule_developer/TEST_RULES.md` |
 | 문서 갱신 | `.codex/ai_rule_developer/DOCUMENT_RULE.md` |
 
 ## 우선순위

@@ -34,6 +34,7 @@ class TemplateRenderer:
             ai_rules / "DOMAIN_MODEL_RULES.md": self._render_domain_model_rules(config, profiles),
             ai_rules / "EXTERNAL_INTEGRATION_RULES.md": self._render_external_integration_rules(config, profiles),
             ai_rules / "SERVICE_LAYER_RULES.md": self._render_service_layer_rules(config, profiles),
+            ai_rules / "TEST_RULES.md": self._render_test_rules(config, profiles),
             docs / "architecture" / "directory.md": self._render_docs_directory(config, profiles),
             docs / "architecture" / "architecture.md": self._render_docs_architecture(config, profiles),
             docs / "architecture" / "component.md": self._render_docs_component(config, profiles),
@@ -60,6 +61,19 @@ class TemplateRenderer:
             docs / "api",
             docs / "database",
         )
+
+    def _framework_rules_pointer(self, config: ProjectConfig) -> list[str]:
+        """Point at the single source of truth for framework-specific rules.
+
+        The per-profile rule list used to be repeated verbatim in GLOBAL_RULES,
+        CODE_STYLE_RULES and SERVICE_LAYER_RULES. Repeating the same lines does
+        not make an agent follow them harder, it only spends context budget, so
+        they are kept in GLOBAL_RULES only and referenced from here.
+        """
+
+        if config.language == "en":
+            return ["", "[Framework Rules]", "- Framework-specific rules live in `GLOBAL_RULES.md`. Apply them together with this document."]
+        return ["", "[프레임워크 규칙]", "- 프레임워크별 규칙은 `GLOBAL_RULES.md`에 있다. 이 문서와 함께 적용한다."]
 
     def _render_global_rules(self, config: ProjectConfig, profiles: tuple[FrameworkProfile, ...]) -> str:
         if config.language == "en":
@@ -315,9 +329,7 @@ class TemplateRenderer:
                 "- Files that mix unrelated layers.",
                 "- Formatting that fights the repository's configured formatter.",
             ]
-            for profile in profiles:
-                lines.extend(["", f"[{profile.display_name} Style Notes]"])
-                lines.extend(self._bullets(profile.framework_rules(config.language)))
+            lines.extend(self._framework_rules_pointer(config))
             return "\n".join(lines)
 
         lines = [
@@ -375,9 +387,7 @@ class TemplateRenderer:
                 "- 서로 다른 계층을 섞은 파일",
                 "- 저장소 formatter와 충돌하는 포맷팅",
             ]
-        for profile in profiles:
-            lines.extend(["", f"[{profile.display_name} 스타일 메모]"])
-            lines.extend(self._bullets(profile.framework_rules(config.language)))
+        lines.extend(self._framework_rules_pointer(config))
         return "\n".join(lines)
 
     def _render_api_design_rules(self, config: ProjectConfig, profiles: tuple[FrameworkProfile, ...]) -> str:
@@ -864,9 +874,7 @@ class TemplateRenderer:
                 "- Mixing external API calls directly into unrelated business logic.",
                 "- Cramming complex branching into one method.",
             ]
-            for profile in profiles:
-                lines.extend(["", f"[{profile.display_name} Service Notes]"])
-                lines.extend(self._bullets(profile.framework_rules(config.language)))
+            lines.extend(self._framework_rules_pointer(config))
             return "\n".join(lines)
 
         lines = [
@@ -898,9 +906,7 @@ class TemplateRenderer:
             "- 외부 API 호출을 무관한 비즈니스 로직에 직접 섞기",
             "- 복잡한 분기 로직을 하나의 메서드에 몰아넣기",
         ]
-        for profile in profiles:
-            lines.extend(["", f"[{profile.display_name} Service Notes]"])
-            lines.extend(self._bullets(profile.framework_rules(config.language)))
+        lines.extend(self._framework_rules_pointer(config))
         return "\n".join(lines)
 
     def _render_test_rules(self, config: ProjectConfig, profiles: tuple[FrameworkProfile, ...]) -> str:
@@ -932,18 +938,6 @@ class TemplateRenderer:
                 lines.extend(["", "## Database Tests", f"- Verify repository behavior and migration/schema assumptions for `{config.database}`."])
             else:
                 lines.extend(["", "## DB 테스트", f"- `{config.database}` repository 동작과 migration/schema 가정을 검증한다."])
-        return "\n".join(lines)
-
-    def _render_framework_rules(self, config: ProjectConfig, profiles: tuple[FrameworkProfile, ...]) -> str:
-        if config.language == "en":
-            lines = [f"# Framework Rules - {config.project_name}", "", "Apply the rules for every active stack profile."]
-        else:
-            lines = [f"# 프레임워크 규칙 - {config.project_name}", "", "활성화된 stack profile별 규칙을 모두 적용한다."]
-
-        for profile in profiles:
-            lines.extend(["", f"## {profile.display_name}", "", profile.philosophy(config.language)])
-            lines.extend(self._bullets(profile.framework_rules(config.language)))
-
         return "\n".join(lines)
 
     def _render_docs_directory(self, config: ProjectConfig, profiles: tuple[FrameworkProfile, ...]) -> str:
@@ -1348,202 +1342,6 @@ class TemplateRenderer:
             lines.extend(["", "## 인증 관련 테이블", "- users, roles, sessions, tokens, audit 관련 테이블이 있으면 문서화한다."])
         return "\n".join(lines)
 
-    def _render_project_overview(self, config: ProjectConfig, profiles: tuple[FrameworkProfile, ...]) -> str:
-        stack_names = ", ".join(profile.display_name for profile in profiles)
-        database = config.database or ("Not specified" if config.language == "en" else "미지정")
-        auth = self._enabled_label(config.auth_enabled, config.language)
-        external_api = self._enabled_label(config.external_api_enabled, config.language)
-
-        if config.language == "en":
-            return "\n".join(
-                [
-                    f"# Project Overview - {config.project_name}",
-                    "",
-                    "## Summary",
-                    config.description or "Describe the project purpose, users, and core product value here.",
-                    "",
-                    "## Basic Information",
-                    f"- Project name: {config.project_name}",
-                    f"- Stack: {stack_names}",
-                    f"- Database: {database}",
-                    f"- Authentication: {auth}",
-                    f"- External API integration: {external_api}",
-                    f"- Documentation level: {config.docs_level}",
-                    "",
-                    "## Architecture Notes",
-                    "- Keep this section updated with the actual directory structure and major module responsibilities.",
-                    "- Record important decisions that affect implementation boundaries.",
-                    "- Link detailed behavior to `FEATURE_SPEC.md`, API contracts to `API_SPEC.md`, and database details to `DB_SPEC.md`.",
-                ]
-            )
-
-        return "\n".join(
-            [
-                f"# 프로젝트 개요 - {config.project_name}",
-                "",
-                "## 요약",
-                config.description or "프로젝트 목적, 사용자, 핵심 제품 가치를 여기에 작성한다.",
-                "",
-                "## 기본 정보",
-                f"- 프로젝트 이름: {config.project_name}",
-                f"- 스택: {stack_names}",
-                f"- 데이터베이스: {database}",
-                f"- 인증 사용: {auth}",
-                f"- 외부 API 연동: {external_api}",
-                f"- 문서화 수준: {config.docs_level}",
-                "",
-                "## 아키텍처 메모",
-                "- 실제 디렉토리 구조와 주요 모듈 책임을 최신 상태로 유지한다.",
-                "- 구현 경계에 영향을 주는 중요한 결정을 기록한다.",
-                "- 상세 기능은 `FEATURE_SPEC.md`, API 계약은 `API_SPEC.md`, DB 상세는 `DB_SPEC.md`에 연결한다.",
-            ]
-        )
-
-    def _render_feature_spec(self, config: ProjectConfig) -> str:
-        if config.language == "en":
-            lines = [
-                f"# Feature Specification - {config.project_name}",
-                "",
-                "Use this document as the implementation reference for product behavior.",
-                "",
-                "## Feature List",
-                "| Feature | User | Behavior | Status | Notes |",
-                "| --- | --- | --- | --- | --- |",
-                "| Example feature | Example user | Describe expected behavior | planned | Replace this row |",
-                "",
-                "## User Flows",
-                "- Describe the main user flow step by step.",
-                "- Include validation, empty state, error state, and permission behavior.",
-            ]
-            if config.auth_enabled:
-                lines.extend(["", "## Auth Requirements", "- Define roles, protected actions, session/token behavior, and permission errors."])
-            if config.external_api_enabled:
-                lines.extend(["", "## External Integration Requirements", "- Define upstream systems, input/output contracts, timeout behavior, and failure handling."])
-            return "\n".join(lines)
-
-        lines = [
-            f"# 기능 명세 - {config.project_name}",
-            "",
-            "이 문서는 제품 동작 구현 시 참고하는 기능 명세다.",
-            "",
-            "## 기능 목록",
-            "| 기능 | 사용자 | 동작 | 상태 | 메모 |",
-            "| --- | --- | --- | --- | --- |",
-            "| 예시 기능 | 예시 사용자 | 기대 동작을 작성 | planned | 이 행을 교체 |",
-            "",
-            "## 사용자 흐름",
-            "- 주요 사용자 흐름을 단계별로 작성한다.",
-            "- validation, empty state, error state, permission behavior를 포함한다.",
-        ]
-        if config.auth_enabled:
-            lines.extend(["", "## 인증 요구사항", "- role, protected action, session/token 동작, permission error를 정의한다."])
-        if config.external_api_enabled:
-            lines.extend(["", "## 외부 연동 요구사항", "- upstream system, input/output contract, timeout behavior, failure handling을 정의한다."])
-        return "\n".join(lines)
-
-    def _render_api_spec(self, config: ProjectConfig) -> str:
-        if config.language == "en":
-            lines = [
-                f"# API Specification - {config.project_name}",
-                "",
-                "Document every public API contract here.",
-                "",
-                "## Endpoint Index",
-                "| Method | Path | Auth | Description |",
-                "| --- | --- | --- | --- |",
-                "| GET | /health | public | Health check |",
-                "",
-                "## Endpoint Detail Template",
-                "### METHOD /path",
-                "- Description:",
-                "- Auth:",
-                "- Path params:",
-                "- Query params:",
-                "- Request body:",
-                "- Response body:",
-                "- Status codes:",
-                "- Error cases:",
-            ]
-            if config.auth_enabled:
-                lines.extend(["", "## Auth Contract", "- Define token/session format, refresh rules, expiration, and required headers."])
-            if config.external_api_enabled:
-                lines.extend(["", "## External API Mapping", "- Map internal endpoints to external upstream calls only when the contract is known."])
-            return "\n".join(lines)
-
-        lines = [
-            f"# API 명세 - {config.project_name}",
-            "",
-            "공개 API 계약을 이 문서에 모두 기록한다.",
-            "",
-            "## 엔드포인트 목록",
-            "| Method | Path | Auth | 설명 |",
-            "| --- | --- | --- | --- |",
-            "| GET | /health | public | 상태 확인 |",
-            "",
-            "## 엔드포인트 상세 템플릿",
-            "### METHOD /path",
-            "- 설명:",
-            "- 인증:",
-            "- Path params:",
-            "- Query params:",
-            "- Request body:",
-            "- Response body:",
-            "- Status codes:",
-            "- Error cases:",
-        ]
-        if config.auth_enabled:
-            lines.extend(["", "## 인증 계약", "- token/session 형식, refresh 규칙, 만료, 필수 header를 정의한다."])
-        if config.external_api_enabled:
-            lines.extend(["", "## 외부 API 매핑", "- 계약이 확인된 경우 내부 endpoint와 외부 upstream 호출 관계를 기록한다."])
-        return "\n".join(lines)
-
-    def _render_db_spec(self, config: ProjectConfig) -> str:
-        database = config.database or ("Not specified" if config.language == "en" else "미지정")
-        if config.language == "en":
-            lines = [
-                f"# Database Specification - {config.project_name}",
-                "",
-                f"- Database: {database}",
-                "",
-                "## Table Template",
-                "### table_name",
-                "- Purpose:",
-                "- Owner module:",
-                "- Soft delete:",
-                "",
-                "| Column | Type | Required | Index | Description |",
-                "| --- | --- | --- | --- | --- |",
-                "| id | string/int | yes | primary | Primary identifier |",
-                "",
-                "## Relationship Template",
-                "- `table.column` -> `other_table.column`: describe cardinality and delete behavior.",
-            ]
-            if config.auth_enabled:
-                lines.extend(["", "## Auth Tables", "- Document users, roles, sessions, tokens, and audit-related tables when they exist."])
-            return "\n".join(lines)
-
-        lines = [
-            f"# DB 명세 - {config.project_name}",
-            "",
-            f"- 데이터베이스: {database}",
-            "",
-            "## 테이블 템플릿",
-            "### table_name",
-            "- 목적:",
-            "- 담당 모듈:",
-            "- Soft delete:",
-            "",
-            "| Column | Type | Required | Index | 설명 |",
-            "| --- | --- | --- | --- | --- |",
-            "| id | string/int | yes | primary | 기본 식별자 |",
-            "",
-            "## 관계 템플릿",
-            "- `table.column` -> `other_table.column`: cardinality와 delete behavior를 설명한다.",
-        ]
-        if config.auth_enabled:
-            lines.extend(["", "## 인증 관련 테이블", "- users, roles, sessions, tokens, audit 관련 테이블이 있으면 문서화한다."])
-        return "\n".join(lines)
-
     def _render_agents_md(self, config: ProjectConfig) -> str:
         """Render the repository-root AGENTS.md entrypoint.
 
@@ -1585,6 +1383,7 @@ class TemplateRenderer:
                     f"| Entity, schema, domain state | `{rule_dir}/DOMAIN_MODEL_RULES.md`, `docs/database/schema.md` |",
                     f"| Use-case and business logic | `{rule_dir}/SERVICE_LAYER_RULES.md` |",
                     f"| Third-party or upstream integration | `{rule_dir}/EXTERNAL_INTEGRATION_RULES.md` |",
+                    f"| Tests | `{rule_dir}/TEST_RULES.md` |",
                     f"| Documentation updates | `{rule_dir}/DOCUMENT_RULE.md` |",
                     "",
                     "## Precedence",
@@ -1658,6 +1457,7 @@ class TemplateRenderer:
                 f"| Entity, schema, 도메인 상태 | `{rule_dir}/DOMAIN_MODEL_RULES.md`, `docs/database/schema.md` |",
                 f"| 유스케이스와 비즈니스 로직 | `{rule_dir}/SERVICE_LAYER_RULES.md` |",
                 f"| 외부 연동 | `{rule_dir}/EXTERNAL_INTEGRATION_RULES.md` |",
+                f"| 테스트 | `{rule_dir}/TEST_RULES.md` |",
                 f"| 문서 갱신 | `{rule_dir}/DOCUMENT_RULE.md` |",
                 "",
                 "## 우선순위",

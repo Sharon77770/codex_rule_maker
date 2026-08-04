@@ -130,12 +130,8 @@ Follow the existing formatter and linter first. When the formatter does not deci
 - Files that mix unrelated layers.
 - Formatting that fights the repository's configured formatter.
 
-[Python Style Notes]
-- Avoid import-time side effects such as file creation, network calls, or process execution.
-- Runnable modules should expose a `main()` entrypoint and keep direct execution under `if __name__ == "__main__"`.
-- Do not add dependencies when the standard library is enough for the problem.
-- Keep meaningful type hints on public functions and classes, and represent input/output models with explicit data structures.
-- Separate pure computation from I/O so logic stays testable and reusable.
+[Framework Rules]
+- Framework-specific rules live in `GLOBAL_RULES.md`. Apply them together with this document.
 
 ========================================================================
 # file: .codex/ai_rule_developer/DOCUMENT_RULE.md
@@ -347,12 +343,23 @@ The service/application layer is the center of business logic.
 - Mixing external API calls directly into unrelated business logic.
 - Cramming complex branching into one method.
 
-[Python Service Notes]
-- Avoid import-time side effects such as file creation, network calls, or process execution.
-- Runnable modules should expose a `main()` entrypoint and keep direct execution under `if __name__ == "__main__"`.
-- Do not add dependencies when the standard library is enough for the problem.
-- Keep meaningful type hints on public functions and classes, and represent input/output models with explicit data structures.
-- Separate pure computation from I/O so logic stays testable and reusable.
+[Framework Rules]
+- Framework-specific rules live in `GLOBAL_RULES.md`. Apply them together with this document.
+
+========================================================================
+# file: .codex/ai_rule_developer/TEST_RULES.md
+========================================================================
+# Test Rules - snapshot-python
+
+## Base Rules
+- Add or update tests when behavior changes.
+- Cover success cases, validation failures, authorization failures, and important error paths.
+- Keep tests aligned with public contracts rather than implementation trivia.
+
+## Python
+- Separate tests for pure logic from tests that cover filesystem, network, or environment I/O.
+- Use `tmp_path`, monkeypatching, and test doubles to isolate filesystem and external dependencies.
+- Lock down CLI arguments, configuration parsing, and error paths with regression tests.
 
 ========================================================================
 # file: .codex/codex_start_prompt.txt
@@ -427,6 +434,7 @@ Load only what the current task needs:
 | Entity, schema, domain state | `.codex/ai_rule_developer/DOMAIN_MODEL_RULES.md`, `docs/database/schema.md` |
 | Use-case and business logic | `.codex/ai_rule_developer/SERVICE_LAYER_RULES.md` |
 | Third-party or upstream integration | `.codex/ai_rule_developer/EXTERNAL_INTEGRATION_RULES.md` |
+| Tests | `.codex/ai_rule_developer/TEST_RULES.md` |
 | Documentation updates | `.codex/ai_rule_developer/DOCUMENT_RULE.md` |
 
 ## Precedence
