@@ -312,6 +312,24 @@ Before changing files, read the `.codex` documents and treat them as repository-
 - Implement external integrations against their confirmed contracts and keep failure behavior explicit.
 - Do not add core code without documenting the intent when the behavior is non-obvious.
 
+## Verification
+- Run this repository's build, test, and lint commands before calling a change finished.
+- Discover those commands from the repository itself: package manifests, `Makefile`, task runner
+  configuration, contributor docs, or the CI workflow. Do not invent a command that is not defined.
+- If a command cannot be run in the current environment, say so explicitly instead of assuming it passed.
+- If a test fails, report the cause. Never delete a test, skip it, or weaken an assertion to get a green run.
+- When behavior changes, update or add tests in the same change.
+
+## Safety
+- Never write secrets, tokens, credentials, or personal data into code, logs, responses, docs, or commit
+  messages. Use obvious placeholders in examples.
+- Do not read or edit `.env` files, credential files, or CI secret configuration. If a new key is needed,
+  report the key name and let a human set the value.
+- Do not perform destructive actions the request did not ask for: bulk file or directory deletion,
+  rewriting git history, force pushing, deleting branches, or data-destroying migrations.
+- If an irreversible step is genuinely required, describe it and ask before running it.
+- Change dependency lock files only when the task is about dependencies.
+
 ========================================================================
 # file: .codex/ai_rule_developer/SERVICE_LAYER_RULES.md
 ========================================================================

@@ -7,6 +7,13 @@
 
 ### Added
 
+- `GLOBAL_RULES.md`에 `## 검증` 섹션 추가. 저장소에 정의된 build/test/lint를 실행하고, 명령은
+  manifest·Makefile·CI 워크플로에서 확인하며, 정의되지 않은 명령을 지어내거나 실행하지 못한 것을
+  통과로 가정하지 않도록 지시합니다. 테스트를 삭제·skip·단정 약화로 통과시키는 것을 금지합니다.
+- `GLOBAL_RULES.md`에 `## 안전` 섹션 추가. secret·자격 증명 취급, `.env` 및 CI secret 설정 접근
+  금지, 요청에 없는 파괴적 작업(대량 삭제, git history 재작성, force push, 데이터 삭제 migration)
+  금지, lock 파일 수정 범위를 규정합니다. 기존에는 secret 관련 문구가 `--auth yes`일 때만
+  생성됐지만 이제 항상 포함됩니다.
 - `TEST_RULES.md` 생성. 렌더러와 프로필별 테스트 규칙 데이터는 이미 있었지만 출력 목록에
   연결되어 있지 않아 실제로는 생성되지 않았습니다. AGENTS.md 라우팅 표에도 추가했습니다.
 - 루트 `AGENTS.md` 진입점 생성. 코딩 에이전트가 자동으로 읽는 상위 지시문 경로를 확보하기 위한

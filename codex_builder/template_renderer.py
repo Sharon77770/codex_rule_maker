@@ -109,6 +109,8 @@ class TemplateRenderer:
                     "- Do not add core code without documenting the intent when the behavior is non-obvious.",
                 ]
             )
+            lines.extend(self._verification_rules(config))
+            lines.extend(self._safety_rules(config))
             return "\n".join(lines)
 
         lines = [
@@ -143,7 +145,68 @@ class TemplateRenderer:
                 "- 동작이 비명시적인 핵심 코드에 의도 설명 없이 코드를 추가하지 않는다.",
             ]
         )
+        lines.extend(self._verification_rules(config))
+        lines.extend(self._safety_rules(config))
         return "\n".join(lines)
+
+    def _verification_rules(self, config: ProjectConfig) -> list[str]:
+        """Tell the agent how to prove a change works.
+
+        This generator does not scan the target repository, so it must not
+        invent commands. Instead it tells the agent where to discover them and
+        forbids guessing.
+        """
+
+        if config.language == "en":
+            return [
+                "",
+                "## Verification",
+                "- Run this repository's build, test, and lint commands before calling a change finished.",
+                "- Discover those commands from the repository itself: package manifests, `Makefile`, task runner",
+                "  configuration, contributor docs, or the CI workflow. Do not invent a command that is not defined.",
+                "- If a command cannot be run in the current environment, say so explicitly instead of assuming it passed.",
+                "- If a test fails, report the cause. Never delete a test, skip it, or weaken an assertion to get a green run.",
+                "- When behavior changes, update or add tests in the same change.",
+            ]
+        return [
+            "",
+            "## 검증",
+            "- 작업을 완료로 보고하기 전에 이 저장소에 정의된 build, test, lint 명령을 실행한다.",
+            "- 명령은 저장소에서 확인한다. package manifest, `Makefile`, task runner 설정, 기여 문서, CI 워크플로를",
+            "  확인하고, 정의되어 있지 않은 명령을 임의로 만들어내지 않는다.",
+            "- 현재 환경에서 실행할 수 없는 명령이 있으면 통과했다고 가정하지 말고 실행하지 못했다고 명시한다.",
+            "- 테스트가 실패하면 원인을 보고한다. 테스트를 삭제하거나 skip 처리하거나 단정을 약화시켜 통과시키지 않는다.",
+            "- 동작이 바뀌면 같은 변경에서 테스트를 추가하거나 수정한다.",
+        ]
+
+    def _safety_rules(self, config: ProjectConfig) -> list[str]:
+        """Guardrails for actions that are hard or impossible to undo."""
+
+        if config.language == "en":
+            return [
+                "",
+                "## Safety",
+                "- Never write secrets, tokens, credentials, or personal data into code, logs, responses, docs, or commit",
+                "  messages. Use obvious placeholders in examples.",
+                "- Do not read or edit `.env` files, credential files, or CI secret configuration. If a new key is needed,",
+                "  report the key name and let a human set the value.",
+                "- Do not perform destructive actions the request did not ask for: bulk file or directory deletion,",
+                "  rewriting git history, force pushing, deleting branches, or data-destroying migrations.",
+                "- If an irreversible step is genuinely required, describe it and ask before running it.",
+                "- Change dependency lock files only when the task is about dependencies.",
+            ]
+        return [
+            "",
+            "## 안전",
+            "- secret, 토큰, 자격 증명, 개인정보를 코드, 로그, 응답, 문서, 커밋 메시지에 남기지 않는다.",
+            "  예시가 필요하면 실제 값 대신 누가 봐도 placeholder임이 분명한 값을 사용한다.",
+            "- `.env`, 자격 증명 파일, CI secret 설정은 읽거나 수정하지 않는다. 새 키가 필요하면 키 이름만 알리고",
+            "  값 설정은 사람에게 맡긴다.",
+            "- 요청에 없는 파괴적 작업을 수행하지 않는다. 파일이나 디렉토리 일괄 삭제, git history 재작성,",
+            "  force push, branch 삭제, 데이터가 사라지는 migration이 여기에 해당한다.",
+            "- 되돌릴 수 없는 작업이 정말 필요하면 내용을 설명하고 실행 전에 확인을 받는다.",
+            "- 의존성 lock 파일은 의존성 변경이 작업 목적일 때만 수정한다.",
+        ]
 
     def _conditional_global_rules(self, config: ProjectConfig) -> list[str]:
         if config.language == "en":
