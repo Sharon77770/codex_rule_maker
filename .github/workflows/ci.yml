@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package with dev extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Verify CLI smoke run
+        run: |
+          mkdir -p "${RUNNER_TEMP}/smoke"
+          cd "${RUNNER_TEMP}/smoke"
+          codex-init --name ci-smoke --stack fastapi --db mysql --auth yes --external-api yes --docs strict
+          test -f AGENTS.md
+          test -f .codex/codex_start_prompt.txt
+          test -f .codex/ai_rule_developer/GLOBAL_RULES.md
+          test -f docs/api/specification.md
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build distributions
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m build
+
+      - name: Check distributions
+        run: python -m twine check dist/*
